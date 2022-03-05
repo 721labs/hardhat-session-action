@@ -25,15 +25,20 @@ import Session from "./session";
       }
     }
 
+    // DEV:
+    console.log(process.env);
+    return;
+
     const session = new Session();
 
     // Resume or start new session.
-    if (core.getBooleanInput("fresh", { required: false })) {
+    if (
+      // Start a fresh session?
+      core.getBooleanInput("fresh", { required: false }) ||
+      // Resume a previous session?
+      !(await session.resume())
+    ) {
       await session.start();
-    } else {
-      if (!(await session.resume())) {
-        await session.start();
-      }
     }
 
     // Block until the new session is ready to go
