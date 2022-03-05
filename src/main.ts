@@ -10,10 +10,7 @@ import Session from "./session";
     // it is a valid command.
     const cmd = core.getInput("cmd", { required: true });
     await exec(`yarn hardhat ${cmd} --help`, [], {
-      listeners: {
-        // Don't write the output
-        stdout: (data: Buffer) => null,
-      },
+      silent: true,
     });
 
     // Check whether the command requires a session; if not, warn.
