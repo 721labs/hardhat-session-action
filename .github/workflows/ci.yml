@@ -42,4 +42,4 @@ jobs:
       - name: "Run Action"
         uses: ./
         with:
-          cmd: --help
+          cmd: check # doesn't do anything other than validates that Hardhat is installed
