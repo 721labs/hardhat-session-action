@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import github from "@actions/github";
-import exec from "@actions/exec";
+import { exec } from "@actions/exec";
 
 (async () => {
   try {
@@ -10,7 +10,7 @@ import exec from "@actions/exec";
     const cmd = core.getInput("cmd");
     console.log(`$ yarn hardhat ${cmd}`);
 
-    await exec.exec("yarn", ["hardhat", cmd]);
+    await exec("yarn", ["hardhat", cmd]);
 
     // 2. Check cache to determine whether a TCOD instance has already been created; alternative check https://github.com/actions/toolkit/tree/main/packages/core
     // 2.1 No: Create a TCOD instance
