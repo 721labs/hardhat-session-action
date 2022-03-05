@@ -35,7 +35,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        operating-system:
+          - ubuntu-latest
+          #- windows-latest
+          #- macos-latest
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
@@ -60,7 +63,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        operating-system:
+          - ubuntu-latest
+          #- windows-latest
+          #- macos-latest
     needs: [test-action-new-session]
     steps:
       - uses: actions/checkout@master
