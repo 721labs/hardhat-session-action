@@ -27,21 +27,22 @@ import Session from "./session";
 
     const session = new Session();
 
-    const freshSession = core.getBooleanInput("fresh", { required: false });
-    if (freshSession) {
+    // Resume or start new session.
+    if (core.getBooleanInput("fresh", { required: false })) {
       await session.start();
     } else {
-      // If neither of these exist, create a new session.
-      const resumed = await session.resume();
-      if (!resumed) {
+      if (!(await session.resume())) {
         await session.start();
       }
     }
 
-    // 2. Check cache to determine whether a TCOD instance has already been created; alternative check https://github.com/actions/toolkit/tree/main/packages/core
-    // 2.1 No: Create a TCOD instance
-    // 2.2 Yes: Use endpoint from cache
-    // 3. Write the TCOD network endpoint to the config.
+    // Block until the new session is ready to go
+
+    // Write endpoint to Hardhat Config
+    // Check for passed in `--config` or `--tsconfig` flags
+    // Check default location (`./hardhat.config.js`)
+
+    // Run command against the network
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);

@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "*"
+env:
+  # Required for build step
+  GIT_SHA: ${{ github.sha }}
 jobs:
   tests:
     name: "Tests"
@@ -23,8 +26,8 @@ jobs:
         run: "yarn build"
       - name: "Test"
         run: "yarn test"
-  test-action:
-    name: "Test Action"
+  test-action-new-session:
+    name: "Test Action: New Session"
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -42,9 +45,32 @@ jobs:
       - name: "Run against new session"
         uses: ./
         with:
-          cmd: check --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+          cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
           fresh: true
       - name: "Run against resumed session"
         uses: ./
         with:
-          cmd: check --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+          cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+  test-action-session-resumption:
+    name: "Test Action: Session Resumption"
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+    needs: [test-action-new-session]
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      # TODO: Future: Cache the build in a previous step and
+      # read it from the cache to avoid the need for rebuilding each time.
+      - name: "Install Dependencies"
+        run: "yarn install"
+      - name: "Build"
+        run: "yarn build"
+      - name: "Run against new session"
+        uses: ./
+        with:
+          cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
