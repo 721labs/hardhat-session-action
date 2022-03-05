@@ -9,9 +9,11 @@ import Session from "./session";
     // Validate that command is being run within a Hardhat project and that
     // it is a valid command.
     const cmd = core.getInput("cmd", { required: true });
-    await exec(`yarn hardhat ${cmd} --help`, [], {
-      silent: true,
-    });
+    try {
+      await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
+    } catch (error) {
+      core.setFailed(`Invalid Command: yarn hardhat ${cmd}`);
+    }
 
     // Check whether the command requires a session; if not, warn.
     const unnecessary = ["check", "clean", "compile", "flatten", "help"];
