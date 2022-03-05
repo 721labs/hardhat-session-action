@@ -8,8 +8,9 @@ import exec from "@actions/exec";
 
     // Validate that the given arg is a valid Hardhat cmd
     const cmd = core.getInput("cmd");
-    console.log(`Running command: ${cmd}`);
-    //await exec.exec("yarn", ["hardhat", cmd]);
+    console.log(`$ yarn hardhat ${cmd}`);
+
+    await exec.exec("yarn", ["hardhat", cmd]);
 
     // 2. Check cache to determine whether a TCOD instance has already been created; alternative check https://github.com/actions/toolkit/tree/main/packages/core
     // 2.1 No: Create a TCOD instance
