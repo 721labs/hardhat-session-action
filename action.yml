@@ -1,0 +1,6 @@
+name: Hardhat Session
+author: 721 Labs
+description: "Run your Hardhat tests in a dedicated, session-lived container"
+runs:
+  using: "node16"
+  main: "dist/main/index.js"

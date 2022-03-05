@@ -1,0 +1,23 @@
+name: "CI"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "*"
+jobs:
+  tests:
+    name: "Tests"
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@master
+      - uses: "actions/setup-node@v2"
+        with:
+          node-version: "16.x"
+      - name: "Build"
+        run: "yarn build"
+      - name: "Test"
+        run: "yarn test"

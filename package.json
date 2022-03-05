@@ -1,0 +1,15 @@
+{
+  "scripts": {
+    "build": "ncc build -m src/main.ts -o dist/main",
+    "test": "echo 'No Tests'"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "@vercel/ncc": "^0.33.3",
+    "typescript": "^4.6.2"
+  },
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0"
+  }
+}
