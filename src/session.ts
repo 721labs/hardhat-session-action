@@ -38,7 +38,7 @@ class Session {
   }
 
   private get _cacheFilename() {
-    return `${this._cacheId}.txt`;
+    return `./${this._cacheId}.txt`;
   }
 
   private _validateCacheId() {
@@ -64,6 +64,7 @@ class Session {
 
     // Read id from file
     if (cacheKey) {
+      core.debug(cacheKey);
       const data = fs.readFileSync(this._cacheFilename, "utf-8");
       return data;
     } else {
