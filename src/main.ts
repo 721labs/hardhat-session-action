@@ -15,7 +15,8 @@ import exec from "@actions/exec";
     // 2.2 Yes: Use endpoint from cache
     // 3. Write the TCOD network endpoint to the config.
   } catch (error) {
-    const message = (error as unknown as any).message as string;
-    core.setFailed(message);
+    console.log(error);
+    //const message = (error as unknown as any).message as string;
+    //core.setFailed(message);
   }
 })();
