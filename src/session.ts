@@ -43,6 +43,8 @@ class Session {
   private _validateCacheId() {
     if (this._cacheId === "") {
       throw new Error("session.setup must be called to accessing the cache!");
+    } else {
+      core.info(`Using Cache: ${this._cacheId}`);
     }
   }
 
