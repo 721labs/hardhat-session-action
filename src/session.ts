@@ -1,19 +1,19 @@
 // Libs
 import fs from "fs";
 import * as core from "@actions/core";
-import * as cache from "@actions/cache";
-import * as github from "@actions/github";
+import { restoreCache, saveCache } from "@actions/cache";
 import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader } from "./api";
 
 // Types
 import type { AxiosPromise } from "axios";
 
-const { ImageOS } = process.env;
+// Env vars
+const { ImageOS, GITHUB_RUN_ID } = process.env;
+const runId = parseInt(GITHUB_RUN_ID as string, 10);
 
 class Session {
-  public id?: string;
-
+  private _id?: string;
   private _cacheId: string = "";
 
   /**
@@ -31,9 +31,7 @@ class Session {
       },
     });
 
-    const id = `hardhatSessionId-${github.context.runId}-${ImageOS}-${nodeVersion}`;
-
-    core.info(`Session: ${id}`);
+    const id = `hardhatSessionId-${runId}-${ImageOS}-${nodeVersion}`;
 
     this._cacheId = id;
   }
@@ -42,19 +40,24 @@ class Session {
     return `${this._cacheId}.txt`;
   }
 
+  private _validateCacheId() {
+    if (this._cacheId === "") {
+      throw new Error("session.setup must be called to accessing the cache!");
+    }
+  }
+
   private async _cacheSessionId(id: string): Promise<void> {
+    this._validateCacheId();
     // First write the session id to the filesystem
     fs.writeFileSync(this._cacheFilename, id);
-
-    await cache.saveCache([this._cacheFilename], this._cacheId);
+    await saveCache([this._cacheFilename], this._cacheId);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
+    this._validateCacheId();
+
     // Check cache (originated w/in previous job).
-    const cacheKey = await cache.restoreCache(
-      [this._cacheFilename],
-      this._cacheId
-    );
+    const cacheKey = await restoreCache([this._cacheFilename], this._cacheId);
 
     // Read id from file
     if (cacheKey) {
@@ -87,7 +90,7 @@ class Session {
 
       await this._cacheSessionId(data.id);
 
-      this.id = data.id;
+      this._id = data.id;
 
       core.info(`Session Started: ${data.id}`);
     } catch (error) {
@@ -100,12 +103,12 @@ class Session {
     const id = await this._decacheSessionId();
     if (!!id) {
       core.info(`Session Resumed: ${id}`);
-      this.id = id;
+      this._id = id;
+      return true;
     } else {
       core.info("No Session Found");
+      return false;
     }
-
-    return false;
   }
 }
 
