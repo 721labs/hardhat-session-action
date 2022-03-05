@@ -32,6 +32,13 @@ jobs:
         operating-system: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: "Install Dependencies"
+        run: "yarn install"
+      - name: "Build"
+        run: "yarn build"
       - name: "Run Action"
         uses: ./
         with:
