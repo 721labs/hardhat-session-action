@@ -1,7 +1,13 @@
 {
+  "version": "0.0.1",
+  "author": "721 Labs (https://721.dev)",
   "scripts": {
     "build": "ncc build -m src/main.ts -o dist/main",
     "test": "echo 'No Tests'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/721labs/hardhat-session-action.git"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
@@ -10,6 +16,7 @@
   },
   "dependencies": {
     "@actions/core": "^1.6.0",
+    "@actions/exec": "^1.1.0",
     "@actions/github": "^5.0.0"
   }
 }
