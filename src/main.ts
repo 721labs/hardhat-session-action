@@ -25,11 +25,8 @@ import Session from "./session";
       }
     }
 
-    // DEV:
-    console.log(process.env);
-    return;
-
     const session = new Session();
+    await session.setup();
 
     // Resume or start new session.
     if (

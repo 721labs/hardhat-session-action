@@ -3,51 +3,67 @@ import fs from "fs";
 import * as core from "@actions/core";
 import * as cache from "@actions/cache";
 import * as github from "@actions/github";
+import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader } from "./api";
 
 // Types
 import type { AxiosPromise } from "axios";
 
-// Constants
-
-// The session is accessible via all jobs within this workflow run,
-// but cannot be accessed in subsequent or parallel workflows.
-const STATE_ID = `hardhatSessionId-${github.context.runId}`;
-
-// Helper Functions
-async function cacheSessionId(id: string): Promise<void> {
-  // Write Session ID to job state
-  core.saveState(STATE_ID, id);
-
-  // Write Session ID to cache
-
-  // First write the session id to the filesystem
-  const filename = `${STATE_ID}.txt`;
-  fs.writeFileSync(filename, id);
-
-  await cache.saveCache([filename], STATE_ID);
-}
-
-async function decacheSessionId(): Promise<string | null> {
-  // Check job state (originated w/in this job).
-  let sessionId = core.getState(STATE_ID);
-  if (sessionId) return sessionId;
-
-  // Check cache (originated w/in previous job).
-  const filename = `${STATE_ID}.txt`;
-  const cacheKey = await cache.restoreCache([filename], STATE_ID);
-
-  // Read id from file
-  if (cacheKey) {
-    const data = fs.readFileSync(filename, "utf-8");
-    return data;
-  } else {
-    return null;
-  }
-}
+const { ImageOS } = process.env;
 
 class Session {
   public id?: string;
+
+  private _cacheId: string = "";
+
+  /**
+   * The session is accessible via all jobs of a given matrix-configuration within this workflow.
+   */
+  private async _buildCacheId() {
+    let nodeVersion = "";
+
+    await exec("node -v", [], {
+      silent: true,
+      listeners: {
+        stdout: (data: Buffer) => {
+          nodeVersion += data.toString();
+        },
+      },
+    });
+
+    const id = `hardhatSessionId-${github.context.runId}-${ImageOS}-${nodeVersion}`;
+
+    core.info(`Session: ${id}`);
+
+    this._cacheId = id;
+  }
+
+  private get _cacheFilename() {
+    return `${this._cacheId}.txt`;
+  }
+
+  private async _cacheSessionId(id: string): Promise<void> {
+    // First write the session id to the filesystem
+    fs.writeFileSync(this._cacheFilename, id);
+
+    await cache.saveCache([this._cacheFilename], this._cacheId);
+  }
+
+  private async _decacheSessionId(): Promise<string | null> {
+    // Check cache (originated w/in previous job).
+    const cacheKey = await cache.restoreCache(
+      [this._cacheFilename],
+      this._cacheId
+    );
+
+    // Read id from file
+    if (cacheKey) {
+      const data = fs.readFileSync(this._cacheFilename, "utf-8");
+      return data;
+    } else {
+      return null;
+    }
+  }
 
   private async _request(
     method: HttpMethod,
@@ -60,12 +76,16 @@ class Session {
     });
   }
 
+  async setup(): Promise<void> {
+    await this._buildCacheId();
+  }
+
   async start(): Promise<void> {
     try {
       // Create a new session
       const { data } = await this._request(HttpMethod.Post, "instance");
 
-      await cacheSessionId(data.id);
+      await this._cacheSessionId(data.id);
 
       this.id = data.id;
 
@@ -77,7 +97,7 @@ class Session {
   }
 
   async resume(): Promise<boolean> {
-    const id = await decacheSessionId();
+    const id = await this._decacheSessionId();
     if (!!id) {
       core.info(`Session Resumed: ${id}`);
       this.id = id;
