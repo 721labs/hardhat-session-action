@@ -34,3 +34,5 @@ jobs:
       - uses: actions/checkout@master
       - name: "Run Action"
         uses: ./
+        with:
+          cmd: --help
