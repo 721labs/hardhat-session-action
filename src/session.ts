@@ -64,7 +64,7 @@ class Session {
 
     // Read id from file
     if (cacheKey) {
-      core.debug(cacheKey);
+      core.info(`Cache Key: ${cacheKey}`);
       const data = fs.readFileSync(this._cacheFilename, "utf-8");
       return data;
     } else {
