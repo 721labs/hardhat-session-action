@@ -39,17 +39,12 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Cmd will fail"
+      - name: "Run against new session"
         uses: ./
         with:
-          cmd: dog
+          cmd: check --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
           fresh: true
-      # - name: "Run against new session"
-      #   uses: ./
-      #   with:
-      #     cmd: check --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
-      #     fresh: true
-      # - name: "Run against resumed session"
-      #   uses: ./
-      #   with:
-      #     cmd: check --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+      - name: "Run against resumed session"
+        uses: ./
+        with:
+          cmd: check --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
