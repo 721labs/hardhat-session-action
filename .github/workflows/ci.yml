@@ -79,7 +79,7 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Start new session and run tests"
+      - name: "Resume session from previous job and run tests"
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
