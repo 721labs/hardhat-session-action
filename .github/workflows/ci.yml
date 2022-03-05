@@ -8,13 +8,16 @@ env:
   # Required for build step
   GIT_SHA: ${{ github.sha }}
 jobs:
-  tests:
-    name: "Tests"
+  unit-tests:
+    name: "Unit Tests"
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
+        operating-system:
+          - ubuntu-latest
+          #- windows-latest
+          #- macos-latest
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
@@ -27,7 +30,7 @@ jobs:
       - name: "Test"
         run: "yarn test"
   test-action-new-session:
-    name: "Test Action: New Session"
+    name: "Action: Test New Session"
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -42,17 +45,17 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Run against new session"
+      - name: "Start new session and run tests"
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
           fresh: true
-      - name: "Run against resumed session"
+      - name: "Resume session and run tests"
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
   test-action-session-resumption:
-    name: "Test Action: Session Resumption"
+    name: "Action: Test Session Resumption"
     runs-on: ${{ matrix.operating-system }}
     strategy:
       fail-fast: false
@@ -70,7 +73,7 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Run against new session"
+      - name: "Start new session and run tests"
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
