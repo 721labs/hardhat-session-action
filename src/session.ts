@@ -4,6 +4,7 @@ import * as core from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader } from "./api";
+import axios from "axios";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -74,11 +75,25 @@ class Session {
     method: HttpMethod,
     endpoint: string
   ): Promise<AxiosPromise> {
-    return await api({
-      method,
-      url: endpoint,
-      headers: { ...makeTraceHeader() },
-    });
+    try {
+      return await api({
+        method,
+        url: endpoint,
+        headers: { ...makeTraceHeader() },
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        // Access to config, request, and response
+        core.error(
+          JSON.stringify({
+            method,
+            url: endpoint,
+            headers: error.request.headers,
+          })
+        );
+      }
+      throw error;
+    }
   }
 
   async setup(): Promise<void> {
