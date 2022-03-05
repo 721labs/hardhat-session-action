@@ -13,6 +13,7 @@ import Session from "./session";
       await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
     } catch (error) {
       core.setFailed(`Invalid Command: yarn hardhat ${cmd}`);
+      return;
     }
 
     // Check whether the command requires a session; if not, warn.
