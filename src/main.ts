@@ -4,9 +4,8 @@ import { exec } from "@actions/exec";
 
 (async () => {
   try {
-    // Validate that the working directory has a hardhat config file
-
-    // Validate that the given arg is a valid Hardhat cmd
+    // Validate that command is being run within a Hardhat project and that
+    // it is a valid command.
     const cmd = core.getInput("cmd");
     await exec(`yarn hardhat ${cmd} --help`);
 
