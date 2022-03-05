@@ -30,7 +30,6 @@ jobs:
       fail-fast: false
       matrix:
         operating-system: [ubuntu-latest, windows-latest, macos-latest]
-    needs: [tests]
     steps:
       - uses: actions/checkout@master
       - name: "Run Action"
