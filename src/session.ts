@@ -6,7 +6,6 @@ import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader, baseAPIConfig } from "./api";
 import { delay } from "./utils";
 import * as io from "@actions/io";
-import * as glob from "@actions/glob";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -72,7 +71,7 @@ class Session {
      * is deterministic, we can always use it to look up a given Session ID.  To do so, we take
      * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
      */
-    await saveCache(this._cachePaths, `${this._jobId}-${this.id}`);
+    await saveCache(this._cachePaths, `${this._jobId}--${this.id}`);
 
     // Delete the cache dir
     await io.rmRF(this._cacheDir);
@@ -81,40 +80,14 @@ class Session {
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
-    // Create cache directory
-    // console.log("\nBEFORE mkdirP");
-    // await exec("ls -l\n");
-    // await io.mkdirP(this._cacheDir);
-    // console.log("\nAFTER mkdirP");
-    // await exec("ls -l\n");
-
     // Restore the cache
     const cacheKey = await restoreCache(
       this._cachePaths,
       this._jobId, // should never hit
-      [`${this._jobId}-`]
+      [`${this._jobId}--`]
     );
 
-    console.log(`\nCACHE KEY: ${cacheKey}`);
-
-    // DEV: View the contents of the cache
-    // console.log("\nAFTER restoreCache");
-    // await exec("ls -l");
-
-    // console.log("\nInside of Cache Dir:");
-    // await exec(`ls ${cacheKey}`);
-
-    // const globber = await glob.create(`.`);
-    // const files = await globber.glob();
-    // console.log(files);
-
-    throw new Error("!");
-    //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
-
-    // Delete the cache dir
-    //await io.rmRF(this._cacheDir);
-
-    return "FOO";
+    return cacheKey ? cacheKey?.split("--")[1] : null;
   }
 
   private async _request(
