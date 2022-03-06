@@ -71,10 +71,9 @@ class Session {
 
     // DEV: Intentionally fail
     await exec("ls -l");
-    throw new Error("!");
 
     if (cacheKey) {
-      //return cacheKey?.split("_")[1];
+      return fs.readFileSync(this._cacheId).toString();
     } else {
       return null;
     }
