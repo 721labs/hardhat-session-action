@@ -46,7 +46,7 @@ import Session from "./session";
     await session.waitUntilReady();
 
     // Run command against the network
-    await exec(`yarn hardhat ${cmd} --network ${networkId}`);
+    //await exec(`yarn hardhat ${cmd} --network ${networkId}`);
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);
