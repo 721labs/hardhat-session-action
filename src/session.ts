@@ -36,9 +36,7 @@ class Session {
       },
     });
 
-    const id = `hardhatSessionId-${runId}-${ImageOS}-${nodeVersion}`;
-
-    this._cacheId = id;
+    this._cacheId = `${runId}-${ImageOS}-${nodeVersion}`;
   }
 
   private get _cacheFilename() {
