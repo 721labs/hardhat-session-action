@@ -60,14 +60,14 @@ jobs:
       - name: "Start new session and run tests"
         uses: ./
         with:
-          cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+          cmd: test --config ./tests/hardhat/hardhat.config.js
           fresh: true
-      - name: Debugging with ssh
-        uses: lhotari/action-upterm@v1
       - name: "Resume session and run tests"
         uses: ./
         with:
-          cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+          cmd: test --config ./tests/hardhat/hardhat.config.js
+      - name: Debugging with ssh
+        uses: lhotari/action-upterm@v1
   test-action-session-resumption:
     name: "Action: Test Session Resumption"
     runs-on: ${{ matrix.operating-system }}
