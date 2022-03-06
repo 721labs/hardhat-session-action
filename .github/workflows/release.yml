@@ -1,0 +1,31 @@
+name: "Release"
+on:
+  push:
+    branches:
+      - "main"
+    workflow_dispatch:
+jobs:
+  build:
+    name: "Build"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: Install Dependencies
+        run: "yarn install"
+      - name: Build
+        run: "yarn build"
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          add-paths: "dist/"
+          committer: "GitHub Action <action@github.com>"
+          author: "GitHub Action <action@github.com>"
+          signoff: "GitHub Action <action@github.com>"
+          commit-message: "Dist"
+          title: "Release: <version>"
+          body: ""
+          base: "main"
+          delete-branch: true
