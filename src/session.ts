@@ -82,11 +82,19 @@ class Session {
         headers,
       });
     } catch (error) {
+      const response = (error as unknown as any).response;
       core.error(
         JSON.stringify({
-          method,
-          url: endpoint,
-          headers: { ...headers, ...baseAPIConfig },
+          request: {
+            method,
+            host: baseAPIConfig.baseURL,
+            endpoint: endpoint,
+            headers: { ...headers, ...baseAPIConfig.headers },
+          },
+          response: {
+            status: response.statusCode,
+            headers: response.headers,
+          },
         })
       );
       throw error;
