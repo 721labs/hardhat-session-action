@@ -40,10 +40,10 @@ import HardhatUtils from "./hardhat";
     }
 
     // Write the session Hardhat config
-    const sessionConfigPath = await HardhatUtils.addNetwork(
-      cmd,
-      session.id as string
-    );
+    // const sessionConfigPath = await HardhatUtils.addNetwork(
+    //   cmd,
+    //   session.id as string
+    // );
 
     // Block until the new session is ready to go
     //await session.waitUntilReady();
@@ -52,7 +52,7 @@ import HardhatUtils from "./hardhat";
     //await exec(`yarn hardhat ${cmd} --config ${sessionConfigPath} --network ${session.id}`);
 
     // Clean up
-    await io.rmRF(sessionConfigPath);
+    //await io.rmRF(sessionConfigPath);
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);

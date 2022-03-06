@@ -62,6 +62,8 @@ jobs:
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
           fresh: true
+      - name: Debugging with ssh
+        uses: lhotari/action-upterm@v1
       - name: "Resume session and run tests"
         uses: ./
         with:

@@ -106,17 +106,17 @@ class Session {
     // console.log("\nInside of Cache Dir:");
     // await exec(`ls ${cacheKey}`);
 
-    const globber = await glob.create(`.`);
-    const files = await globber.glob();
-    console.log(files);
+    // const globber = await glob.create(`.`);
+    // const files = await globber.glob();
+    // console.log(files);
 
-    throw new Error("!");
+    // throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
 
     // Delete the cache dir
-    await io.rmRF(this._cacheDir);
+    //await io.rmRF(this._cacheDir);
 
-    //return id;
+    return "FOO";
   }
 
   private async _request(
