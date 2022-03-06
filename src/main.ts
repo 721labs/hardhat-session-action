@@ -10,10 +10,11 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
     // Validate that command is being run within a Hardhat project and that
     // it is a valid command.
     const cmd = core.getInput("cmd", { required: true });
-    try {
-      await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
-    } catch (error) {
-      core.setFailed(`Invalid Command: yarn hardhat ${cmd}`);
+
+    // First check against known commands.
+
+    if (cmd.includes("node")) {
+      core.warning("This has no effect: session node is already running");
       return;
     }
 
@@ -26,8 +27,12 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
       }
     }
 
-    if (cmd.includes("node")) {
-      core.warning("This has no effect: session node is already running");
+    // Then check against user-defined commands.
+
+    try {
+      await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
+    } catch (error) {
+      core.setFailed(`Invalid Command: yarn hardhat ${cmd}`);
       return;
     }
 
