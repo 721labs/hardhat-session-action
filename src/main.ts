@@ -2,6 +2,7 @@ import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 
 import Session from "./session";
+import { updateHardhatConfig } from "./utils";
 
 (async () => {
   try {
@@ -38,15 +39,13 @@ import Session from "./session";
     }
 
     // Write endpoint to Hardhat Config
-    const networkId = `session-${session.id}`;
-    // Check for passed in `--config` or `--tsconfig` flags
-    // Check default location (`./hardhat.config.js`)
+    await updateHardhatConfig(cmd, session.id as string);
 
     // Block until the new session is ready to go
-    await session.waitUntilReady();
+    //await session.waitUntilReady();
 
     // Run command against the network
-    //await exec(`yarn hardhat ${cmd} --network ${networkId}`);
+    //await exec(`yarn hardhat ${cmd} --network ${session.id}`);
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);
