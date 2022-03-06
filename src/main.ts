@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 
 import Session from "./session";
-import { updateHardhatConfig } from "./utils";
+import HardhatUtils from "./hardhat";
 
 (async () => {
   try {
@@ -39,7 +39,7 @@ import { updateHardhatConfig } from "./utils";
     }
 
     // Write endpoint to Hardhat Config
-    await updateHardhatConfig(cmd, session.id as string);
+    await HardhatUtils.updateConfig(cmd, session.id as string);
 
     // Block until the new session is ready to go
     //await session.waitUntilReady();
