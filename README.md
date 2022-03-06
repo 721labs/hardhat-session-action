@@ -9,7 +9,7 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
 ### Usage
 
 ```yaml
-- uses: 721labs/hardhat-session-action@master
+- uses: 721labs/hardhat-session-action@main
   with:
     # The Hardhat command, including flags, you wish to run within the session container.
     # For example:
