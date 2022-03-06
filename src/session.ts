@@ -68,6 +68,7 @@ class Session {
 
     // Read id from file
     if (cacheKey) {
+      await exec("ls"); // DEV:
       const data = fs.readFileSync(this._cacheFilename, "utf-8");
       return data;
     } else {
