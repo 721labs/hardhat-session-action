@@ -102,11 +102,11 @@ class Session {
     await exec("ls -l");
 
     console.log("\nInside of Cache Dir:");
-    // await exec(`cd ${cacheKey} && ls -l`);
+    await exec(`ls ${cacheKey}`);
 
-    const globber = await glob.create(`${cacheKey}/*`);
-    const files = await globber.glob();
-    console.log(files);
+    // const globber = await glob.create(`${cacheKey}/*`);
+    // const files = await globber.glob();
+    // console.log(files);
 
     throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
