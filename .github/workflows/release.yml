@@ -8,8 +8,8 @@ on:
       - ".github/workflows/release.yml"
   workflow_dispatch:
 jobs:
-  build:
-    name: "Build"
+  build-and-pr:
+    name: "Build and PR"
     runs-on: "ubuntu-latest"
     steps:
       - uses: actions/checkout@master
@@ -27,8 +27,8 @@ jobs:
           committer: "GitHub Action <action@github.com>"
           author: "GitHub Action <action@github.com>"
           signoff: "GitHub Action <action@github.com>"
-          commit-message: "Dist"
-          title: "Release: <version_tag>"
+          commit-message: "Release: v<version_tag>"
+          title: "Release: v<version_tag>"
           body: ""
           base: "main"
           delete-branch: true
