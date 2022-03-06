@@ -15,6 +15,10 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
     # For example:
     # $ npx hardhat <cmd>
     # $ npx hardhat run test --show-stack-traces --verbose
+    #
+    # Note that some commands such as `node` as well as the
+    # `--network` flag are unnecessary.
+    #
     # Type: String
     # Required: True
     cmd: ""
