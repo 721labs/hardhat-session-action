@@ -17,7 +17,7 @@ describe("HardhatUtils", () => {
     it("strips --config", () => {
       expect(
         HardHatUtils.stripConfigFlag(
-          "yarn hardhat test --config hardhat.config.js"
+          "yarn hardhat test --config subdir/hardhat.config.js"
         )
       ).to.equal("yarn hardhat test");
     });

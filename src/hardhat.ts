@@ -17,8 +17,8 @@ class HardhatUtils {
     preference?: ConfigFileType
   ): Promise<string> {
     // Check for passed in `--config` or `--tsconfig` flags
-    const match = cmd.match(/--(ts)?config\s(?<path>.+)/);
-    if (match) return (match?.groups?.path as string).split(" ")[0];
+    const match = cmd.match(/--(ts)?config\s(?<path>(\w|\.|\/)+)/);
+    if (match) return match?.groups?.path as string;
     else {
       // Glob the filesystem
       const patterns = [
@@ -100,7 +100,7 @@ class HardhatUtils {
    * @returns cmd without config flag.
    */
   public static stripConfigFlag(cmd: string): string {
-    const match = cmd.match(/(?<flag>\s--(ts)?config\s(\w|\.)+)/);
+    const match = cmd.match(/(?<flag>\s--(ts)?config\s(\w|\.|\/)+)/);
     if (match) {
       const flag = match?.groups?.flag as string;
       return cmd.replace(flag, "");
