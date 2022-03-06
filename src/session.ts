@@ -136,7 +136,7 @@ class Session {
       HttpMethod.Get,
       `instance/${this.id}/status`
     );
-    core.info(`Status: ${data.status}`);
+    core.info(`Session Status: ${data.status}`);
     if (data.status === "Ready") return;
     else if (data.status === "Swept") {
       // TODO: Do a better job handling.
