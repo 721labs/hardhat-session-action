@@ -12,3 +12,6 @@ inputs:
 runs:
   using: "node16"
   main: "dist/main/index.js"
+branding:
+  color: "red"
+  icon: "box"
