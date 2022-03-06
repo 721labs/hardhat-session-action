@@ -3,7 +3,7 @@ import { exec } from "@actions/exec";
 import * as io from "@actions/io";
 
 import Session from "./session";
-import HardhatUtils from "./hardhat";
+import HardhatUtils, { ConfigFileType } from "./hardhat";
 
 (async () => {
   try {
@@ -40,19 +40,20 @@ import HardhatUtils from "./hardhat";
     }
 
     // Write the session Hardhat config
-    // const sessionConfigPath = await HardhatUtils.addNetwork(
-    //   cmd,
-    //   session.id as string
-    // );
+    const configMeta = await HardhatUtils.addNetwork(cmd, session.id as string);
 
     // Block until the new session is ready to go
-    //await session.waitUntilReady();
+    await session.waitUntilReady();
 
     // Run command against the network
-    //await exec(`yarn hardhat ${cmd} --config ${sessionConfigPath} --network ${session.id}`);
+    const configFlag =
+      configMeta.type === ConfigFileType.JS ? "config" : "tsconfig";
+    await exec(
+      `yarn hardhat ${cmd} --${configFlag} ${configMeta.path} --network ${session.id}`
+    );
 
     // Clean up
-    //await io.rmRF(sessionConfigPath);
+    await io.rmRF(configMeta.path);
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);
