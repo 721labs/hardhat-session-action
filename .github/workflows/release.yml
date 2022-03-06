@@ -3,7 +3,10 @@ on:
   push:
     branches:
       - "main"
-    workflow_dispatch:
+    paths-ignore:
+      - "dist/**" # Don't recursively invoke.
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
 jobs:
   build:
     name: "Build"
@@ -25,7 +28,7 @@ jobs:
           author: "GitHub Action <action@github.com>"
           signoff: "GitHub Action <action@github.com>"
           commit-message: "Dist"
-          title: "Release: <version>"
+          title: "Release: <version_tag>"
           body: ""
           base: "main"
           delete-branch: true
