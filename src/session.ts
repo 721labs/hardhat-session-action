@@ -52,7 +52,7 @@ class Session {
    * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
    */
   private get _cacheId(): string {
-    return `${this._jobId}`;
+    return `${this._jobId}`.replaceAll(".", "_");
   }
 
   private async _cacheSessionId(id: string): Promise<void> {
@@ -60,11 +60,12 @@ class Session {
     // Create a cache directory
     await exec(`mkdir ${this._cacheId}`);
     // First write the session id to the filesystem
-    fs.writeFileSync(`${this._cacheId}/${id}`, id);
-    await saveCache([`${this._cacheId}/`], this._cacheId);
+    fs.writeFileSync(`${this._cacheId}/${id}.txt`, id);
 
     //dev
     await exec("ls -l");
+
+    await saveCache([`${this._cacheId}/`], this._cacheId);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
