@@ -5,9 +5,7 @@ import { expect } from "chai";
 
 import path from "path";
 import fs from "fs";
-
-const networkConfig =
-  'test:{"url":"https://tcod.app3.dev/v0/instance/test","chainId":1337';
+import { randomUUID } from "crypto";
 
 describe("HardhatUtils", () => {
   let jsConfigPath: string;
@@ -68,12 +66,16 @@ describe("HardhatUtils", () => {
     describe("Updates JS Configs", () => {
       let configPathDir: string;
       let configMeta: SessionConfigMeta;
+      let networkConfig: string;
 
       before(async () => {
+        const sessionId = randomUUID().split("-")[0];
+        networkConfig = `"${sessionId}":{"url":"https://tcod.app3.dev/v0/instance/${sessionId}","chainId":1337`;
+
         configPathDir = path.dirname(jsConfigPath);
         configMeta = await HardHatUtils.writeSessionConfig(
           jsConfigPath,
-          "test"
+          sessionId
         );
       });
 
@@ -90,6 +92,8 @@ describe("HardhatUtils", () => {
       it("Config contains network config", () => {
         const data = fs.readFileSync(configMeta.path).toString();
         const oneLine = data.replaceAll("\n", "");
+        console.log(oneLine);
+        console.log(networkConfig);
         expect(oneLine).to.contain(networkConfig);
       });
 
@@ -101,12 +105,16 @@ describe("HardhatUtils", () => {
     describe("Updates TS Configs", () => {
       let configPathDir: string;
       let configMeta: SessionConfigMeta;
+      let networkConfig: string;
 
       before(async () => {
+        const sessionId = randomUUID().split("-")[0];
+        networkConfig = `"${sessionId}":{"url":"https://tcod.app3.dev/v0/instance/${sessionId}","chainId":1337`;
+
         configPathDir = path.dirname(tsConfigPath);
         configMeta = await HardHatUtils.writeSessionConfig(
           tsConfigPath,
-          "test"
+          sessionId
         );
       });
 
