@@ -93,6 +93,19 @@ class HardhatUtils {
 
     return config;
   }
+
+  /**
+   * If a command contains the `config` or `tsconfig` flag, strip it.
+   * @param cmd
+   * @returns cmd without config flag.
+   */
+  public static stripConfigFlag(cmd: string): string {
+    const match = cmd.match(/(?<flag>\s--(ts)?config\s(\w|\.)+)/);
+    if (match) {
+      const flag = match?.groups?.flag as string;
+      return cmd.replace(flag, "");
+    } else return cmd;
+  }
 }
 
 export default HardhatUtils;

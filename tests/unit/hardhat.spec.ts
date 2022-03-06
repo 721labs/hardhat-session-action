@@ -13,6 +13,28 @@ describe("HardhatUtils", () => {
   let jsConfigPath: string;
   let tsConfigPath: string;
 
+  context("#stripConfigFlag", () => {
+    it("strips --config", () => {
+      expect(
+        HardHatUtils.stripConfigFlag(
+          "yarn hardhat test --config hardhat.config.js"
+        )
+      ).to.equal("yarn hardhat test");
+    });
+    it("strips --tsconfig", () => {
+      expect(
+        HardHatUtils.stripConfigFlag(
+          "yarn hardhat --tsconfig hardhat.config.ts --help"
+        )
+      ).to.equal("yarn hardhat --help");
+    });
+    it("does not strip when no config is present", () => {
+      expect(HardHatUtils.stripConfigFlag("yarn hardhat --version")).to.equal(
+        "yarn hardhat --version"
+      );
+    });
+  });
+
   context("#findConfig", () => {
     it("Can parse a js config from a cmd", async () => {
       const cmd = "yarn hardhat test --config sub/test.js --version";
