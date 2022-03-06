@@ -57,26 +57,27 @@ class Session {
 
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
+    // Create a cache directory
+    await exec(`mkdir ${this._cacheId}`);
     // First write the session id to the filesystem
-    fs.writeFileSync(this._cacheId, id);
-    await saveCache([this._cacheId], this._cacheId);
+    fs.writeFileSync(`${this._cacheId}/${id}`, id);
+    await saveCache([`${this._cacheId}/`], this._cacheId);
+
+    //dev
+    await exec("ls -l");
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([this._cacheId], this._cacheId);
+    const cacheKey = await restoreCache([`${this._cacheId}/`], this._cacheId);
     core.info(`CACHE HIT: ${cacheKey}`);
 
-    // DEV: Intentionally fail
+    //dev
     await exec("ls -l");
 
-    if (cacheKey) {
-      return fs.readFileSync(this._cacheId).toString();
-    } else {
-      return null;
-    }
+    return cacheKey ? fs.readFileSync(this._cacheId).toString() : null;
   }
 
   private async _request(
