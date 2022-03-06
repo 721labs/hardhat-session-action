@@ -95,7 +95,7 @@ class Session {
     // Restore the cache
     const cacheKey = await restoreCache(this._cachePaths, this._cacheKey);
 
-    console.log(`\nCACHE KEY: ${cacheKey}`);
+    console.log(`\nCACHE KEY: ${JSON.stringify({ cacheKey })}`);
 
     // DEV: View the contents of the cache
     console.log("\nAFTER restoreCache");
