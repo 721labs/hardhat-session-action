@@ -68,6 +68,8 @@ jobs:
           cmd: test --config ./tests/hardhat/hardhat.config.js
       - name: Debugging with ssh
         uses: lhotari/action-upterm@v1
+        with:
+          limit-access-to-users: will-holley
   test-action-session-resumption:
     name: "Action: Test Session Resumption"
     runs-on: ${{ matrix.operating-system }}
