@@ -6,7 +6,7 @@ import path from "path";
 
 enum ConfigFileType {
   JS = "js",
-  TS = "ts",
+  TS = "ts"
 }
 
 type SessionConfigMeta = { path: string; type: ConfigFileType };
@@ -24,7 +24,7 @@ class HardhatUtils {
       const patterns = [
         "**/**/**/hardhat.config.ts",
         "**/**/**/hardhat.config.js",
-        "!node_modules",
+        "!node_modules"
       ];
       const globber = await glob.create(patterns.join("\n"));
       const files = await globber.glob();
@@ -54,8 +54,8 @@ class HardhatUtils {
     const sessionNetworkConfig = JSON.stringify({
       [sessionId]: {
         url: `https://tcod.app3.dev/api/v0/instance/${sessionId}`,
-        chainId: 1337,
-      },
+        chainId: 1337
+      }
     })
       .replace(`{"${sessionId}"`, `"${sessionId}"`)
       .replace("}}", "},");
@@ -65,7 +65,7 @@ class HardhatUtils {
     const lines: Array<string> = [];
 
     const reader = readline.createInterface({
-      input: fs.createReadStream(filepath),
+      input: fs.createReadStream(filepath)
     });
 
     reader.on("line", (line: string) => {
@@ -100,7 +100,6 @@ class HardhatUtils {
    * @returns cmd without config flag.
    */
   public static stripFlags(cmd: string): string {
-
     let clean: string = cmd;
 
     // Strip `--config` and `--tsconfig`
@@ -112,11 +111,10 @@ class HardhatUtils {
 
     // Strip `--network`
     const netMatch = clean.match(/(?<network>\s--network\s(\w+))/);
-    if(netMatch){
+    if (netMatch) {
       const network = netMatch?.groups?.network as string;
-      clean = clean.replace(network, "")
+      clean = clean.replace(network, "");
     }
-    
 
     return clean;
   }

@@ -34,8 +34,8 @@ class Session {
       listeners: {
         stdout: (data: Buffer) => {
           nodeVersion += data.toString();
-        },
-      },
+        }
+      }
     });
 
     //@ts-ignore
@@ -99,7 +99,7 @@ class Session {
       return await api({
         method,
         url: endpoint,
-        headers,
+        headers
       });
     } catch (error) {
       const response = (error as unknown as any).response;
@@ -109,8 +109,8 @@ class Session {
             method,
             host: baseAPIConfig.baseURL,
             endpoint: endpoint,
-            headers: { ...headers, ...baseAPIConfig.headers },
-          },
+            headers: { ...headers, ...baseAPIConfig.headers }
+          }
         })
       );
       core.error(JSON.stringify(response));
