@@ -66,8 +66,10 @@ jobs:
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js
-      - name: tmate debugging session
-        uses: mxschmitt/action-tmate@v3
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+        with:
+          limit-access-to-actor: true
   test-action-session-resumption:
     name: "Action: Test Session Resumption"
     runs-on: ${{ matrix.operating-system }}
