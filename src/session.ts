@@ -5,6 +5,7 @@ import { restoreCache, saveCache } from "@actions/cache";
 import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader, baseAPIConfig } from "./api";
 import { delay } from "./utils";
+import * as io from "@actions/io";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -56,28 +57,44 @@ class Session {
     return `${this._jobId}`.replaceAll(".", "_");
   }
 
+  private get _cachePaths(): Array<string> {
+    return [`**/${this._cacheId}`];
+  }
+
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
-    // First write the session id to the filesystem
-    fs.writeFileSync(this._cacheId, id);
-    await saveCache([`${this._cacheId}_${id}`], this._cacheId);
+
+    // Create cache directory
+    await io.mkdirP(this._cacheId);
+
+    // Write the session id to the cache directory
+    fs.writeFileSync(`${this._cacheId}/${id}`, id);
+
+    // Save the cache directory
+    await saveCache(this._cachePaths, this._cacheId);
+
+    // Delete the cache dir
+    await io.rmRF(this._cacheId);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
-    // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([this._cacheId], this._cacheId, [
-      this._cacheId,
-    ]);
-    core.info(`CACHE HIT: ${cacheKey}`);
+    // Create cache directory
+    await io.mkdirP(this._cacheId);
 
-    //dev
-    await exec("pwd");
-    await exec(`ls -l`);
-    await exec("ls ..");
+    // Restore the cache
+    const cacheKey = await restoreCache(this._cachePaths, this._cacheId);
 
-    return cacheKey ? fs.readFileSync(this._cacheId).toString() : null;
+    // DEV: View the contents of the cache
+    await exec(`ls ${this._cacheId}`);
+    throw new Error("!");
+    //const id = cacheKey ? fs.readFileSync(this._cacheId).toString() : null;
+
+    // Delete the cache dir
+    await io.rmRF(this._cacheId);
+
+    return id;
   }
 
   private async _request(
