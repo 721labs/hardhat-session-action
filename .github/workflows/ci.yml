@@ -57,11 +57,16 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Start new session by running a HH node"
+      - name: "Attempt to start a new session by running a HH node"
         uses: ./
         with:
           cmd: node --network localhost --config ./tests/hardhat/hardhat.config.js
           fresh: true
+      - name: "Start a new session by running a custom task"
+        uses: ./
+        with:
+          cmd: hsa:print --message "CI" --config ./tests/hardhat/hardhat.config.js
+          fresh: false
       - name: "Resume session and run tests"
         uses: ./
         with:
