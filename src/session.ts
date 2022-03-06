@@ -67,10 +67,13 @@ class Session {
 
     // Check cache (originated w/in previous job).
     const cacheKey = await restoreCache([this._cacheId], "", [this._cacheId]);
-    core.info(`CACHE HIT: ${cacheKey?.split("_")[1]}`);
+    core.info(`CACHE HIT: ${cacheKey}`);
+
+    // DEV: Intentionally fail
+    throw new Error("!");
 
     if (cacheKey) {
-      return cacheKey?.split("_")[1];
+      //return cacheKey?.split("_")[1];
     } else {
       return null;
     }
