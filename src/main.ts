@@ -37,14 +37,16 @@ import Session from "./session";
       await session.start();
     }
 
-    // Block until the new session is ready to go
-    await session.waitUntilReady();
-
     // Write endpoint to Hardhat Config
+    const networkId = `session-${session.id}`;
     // Check for passed in `--config` or `--tsconfig` flags
     // Check default location (`./hardhat.config.js`)
 
+    // Block until the new session is ready to go
+    await session.waitUntilReady();
+
     // Run command against the network
+    await exec(`yarn hardhat ${cmd} --network ${networkId}`);
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);

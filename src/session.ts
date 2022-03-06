@@ -16,7 +16,7 @@ const runId = parseInt(GITHUB_RUN_ID as string, 10);
 const MAX_RETRY_TIMEOUT = 1000 * 20; // wait up to 20s for the session to start
 
 class Session {
-  private _id?: string;
+  public id?: string;
   private _cacheId: string = "";
 
   private _retryTimer: number = 0;
@@ -110,7 +110,7 @@ class Session {
 
       await this._cacheSessionId(data.id);
 
-      this._id = data.id;
+      this.id = data.id;
 
       core.info(`Session Started: ${data.id}`);
     } catch (error) {
@@ -123,7 +123,7 @@ class Session {
     const id = await this._decacheSessionId();
     if (!!id) {
       core.info(`Session Resumed: ${id}`);
-      this._id = id;
+      this.id = id;
       return true;
     } else {
       core.info("No Session Found");
@@ -134,8 +134,9 @@ class Session {
   async waitUntilReady(): Promise<void> {
     const { data } = await this._request(
       HttpMethod.Get,
-      `instance/${this._id}/status`
+      `instance/${this.id}/status`
     );
+    core.info(`Status: ${data.status}`);
     if (data.status === "Ready") return;
     else if (data.status === "Swept") {
       // TODO: Do a better job handling.
