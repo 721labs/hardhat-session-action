@@ -57,10 +57,10 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Start new session and run tests"
+      - name: "Start new session by running a HH node"
         uses: ./
         with:
-          cmd: test --network localhost --config ./tests/hardhat/hardhat.config.js
+          cmd: node --network localhost --config ./tests/hardhat/hardhat.config.js
           fresh: true
       - name: "Resume session and run tests"
         uses: ./
