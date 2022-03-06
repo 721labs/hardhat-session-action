@@ -6,6 +6,7 @@ import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader, baseAPIConfig } from "./api";
 import { delay } from "./utils";
 import * as io from "@actions/io";
+import * as glob from "@actions/glob";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -101,7 +102,12 @@ class Session {
     await exec("ls -l");
 
     console.log("\nInside of Cache Dir:");
-    await exec(`cd ${cacheKey} && ls -l`);
+    // await exec(`cd ${cacheKey} && ls -l`);
+
+    const globber = await glob.create(`${cacheKey}/*`);
+    const files = await globber.glob();
+    console.log(files);
+
     throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
 
