@@ -93,20 +93,22 @@ class Session {
     await exec("ls -l\n");
 
     // Restore the cache
-    const cacheKey = await restoreCache(this._cachePaths, this._cacheKey);
+    const cacheKey = (
+      await restoreCache(this._cachePaths, this._cacheKey)
+    )?.trim();
 
-    console.log(`\nCACHE KEY: ${JSON.stringify({ key: cacheKey?.trim() })}`);
+    // console.log(`\nCACHE KEY: ${JSON.stringify({ key: cacheKey })}`);
 
-    // DEV: View the contents of the cache
-    console.log("\nAFTER restoreCache");
-    await exec("ls -l");
+    // // DEV: View the contents of the cache
+    // console.log("\nAFTER restoreCache");
+    // await exec("ls -l");
 
-    console.log("\nInside of Cache Dir:");
-    await exec(`ls ${cacheKey}`);
+    // console.log("\nInside of Cache Dir:");
+    // await exec(`ls ${cacheKey}`);
 
-    // const globber = await glob.create(`${cacheKey}/*`);
-    // const files = await globber.glob();
-    // console.log(files);
+    const globber = await glob.create(`.`);
+    const files = await globber.glob();
+    console.log(files);
 
     throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
