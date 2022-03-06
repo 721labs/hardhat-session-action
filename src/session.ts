@@ -71,7 +71,9 @@ class Session {
     core.info(`CACHE HIT: ${cacheKey}`);
 
     //dev
-    await exec(`ls . -l`);
+    await exec("pwd");
+    await exec(`ls -l`);
+    await exec("ls ..");
 
     return cacheKey ? fs.readFileSync(this._cacheId).toString() : null;
   }
