@@ -52,7 +52,7 @@ class Session {
    * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
    */
   private get _cacheId(): string {
-    return `${this._jobId}_${this.id}`;
+    return `${this._jobId}`;
   }
 
   private async _cacheSessionId(id: string): Promise<void> {
@@ -66,12 +66,11 @@ class Session {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([`${this._jobId}_*`], "", [
-      this._jobId,
-    ]);
+    const cacheKey = await restoreCache([this._cacheId], this._cacheId);
     core.info(`CACHE HIT: ${cacheKey}`);
 
     // DEV: Intentionally fail
+    await exec("ls -l");
     throw new Error("!");
 
     if (cacheKey) {
