@@ -32,6 +32,7 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
     try {
       await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
     } catch (error) {
+      console.error(error);
       core.setFailed(`Invalid Command: yarn hardhat ${cmd}`);
       return;
     }
