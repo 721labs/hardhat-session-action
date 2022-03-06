@@ -111,12 +111,9 @@ class Session {
             endpoint: endpoint,
             headers: { ...headers, ...baseAPIConfig.headers },
           },
-          response: {
-            status: response.statusCode,
-            headers: response.headers,
-          },
         })
       );
+      core.error(JSON.stringify(response));
       throw error;
     }
   }
