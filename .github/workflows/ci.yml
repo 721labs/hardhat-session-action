@@ -7,7 +7,6 @@ on:
 env:
   # Required for build step
   GIT_SHA: ${{ github.sha }}
-  ACTIONS_STEP_DEBUG: true
 jobs:
   unit-tests:
     name: "Unit Tests"
