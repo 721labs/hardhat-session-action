@@ -66,8 +66,8 @@ jobs:
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js
-      - name: Debugging with ssh
-        uses: lhotari/action-upterm@v1
+      - name: tmate debugging session
+        uses: mxschmitt/action-tmate@v3
   test-action-session-resumption:
     name: "Action: Test Session Resumption"
     runs-on: ${{ matrix.operating-system }}
