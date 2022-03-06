@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
+import * as io from "@actions/io";
 
 import Session from "./session";
 import HardhatUtils from "./hardhat";
@@ -38,14 +39,20 @@ import HardhatUtils from "./hardhat";
       await session.start();
     }
 
-    // Write endpoint to Hardhat Config
-    await HardhatUtils.updateConfig(cmd, session.id as string);
+    // Write the session Hardhat config
+    const sessionConfigPath = await HardhatUtils.addNetwork(
+      cmd,
+      session.id as string
+    );
 
     // Block until the new session is ready to go
     //await session.waitUntilReady();
 
     // Run command against the network
-    //await exec(`yarn hardhat ${cmd} --network ${session.id}`);
+    //await exec(`yarn hardhat ${cmd} --config ${sessionConfigPath} --network ${session.id}`);
+
+    // Clean up
+    await io.rmRF(sessionConfigPath);
   } catch (error) {
     const message = (error as unknown as any).message as string;
     core.setFailed(message);
