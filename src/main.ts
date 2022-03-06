@@ -26,6 +26,11 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
       }
     }
 
+    if (cmd.includes("node")) {
+      core.warning("This has no effect: session node is already running");
+      return;
+    }
+
     const session = new Session();
     await session.setup();
 
