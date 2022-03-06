@@ -94,11 +94,14 @@ class Session {
     // Restore the cache
     const cacheKey = await restoreCache(this._cachePaths, this._cacheKey);
 
-    console.log(`CACHE KEY: ${cacheKey}`);
+    console.log(`\nCACHE KEY: ${cacheKey}`);
 
     // DEV: View the contents of the cache
     console.log("\nAFTER restoreCache");
     await exec("ls -l");
+
+    console.log("\nInside of Cache Dir:");
+    await exec(`cd ${cacheKey} && ls -l`);
     throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
 
