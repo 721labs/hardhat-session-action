@@ -23,7 +23,8 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16.x"
-      - uses: actions/cache@v2
+      - name: "Cache Dependencies"
+        uses: actions/cache@v2
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
@@ -47,12 +48,18 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16.x"
-      - uses: actions/cache@v2
+      - name: "Cache Dependencies"
+        uses: actions/cache@v2
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       - name: "Install Dependencies"
         run: "yarn install"
+      - name: "Cache Build"
+        uses: actions/cache@v2
+        with:
+          path: "**/dist"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/dist/main/index.js') }}
       - name: "Build"
         run: "yarn build"
       - name: "Start new session and run tests"
@@ -80,13 +87,19 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "16.x"
-      - uses: actions/cache@v2
+      - name: "Cache Dependencies"
+        uses: actions/cache@v2
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
       # read it from the cache to avoid the need for rebuilding each time.
       - name: "Install Dependencies"
         run: "yarn install"
+      - name: "Cache Build"
+        uses: actions/cache@v2
+        with:
+          path: "**/dist"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/dist/main/index.js') }}
       - name: "Build"
         run: "yarn build"
       - name: "Resume session from previous job and run tests"
