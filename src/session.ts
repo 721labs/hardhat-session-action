@@ -39,10 +39,6 @@ class Session {
     this._cacheId = `${runId}-${ImageOS}-${nodeVersion}`;
   }
 
-  private get _cacheFilename() {
-    return `./${this._cacheId}.txt`;
-  }
-
   private _validateCacheId() {
     if (this._cacheId === "") {
       throw new Error("session.setup must be called to accessing the cache!");
@@ -54,20 +50,20 @@ class Session {
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
     // First write the session id to the filesystem
-    fs.writeFileSync(this._cacheFilename, id);
-    await saveCache([this._cacheFilename], this._cacheId);
+    fs.writeFileSync(this._cacheId, id);
+    await saveCache([this._cacheId], this._cacheId);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([this._cacheFilename], this._cacheId);
+    const cacheKey = await restoreCache([this._cacheId], this._cacheId);
 
     // Read id from file
     if (cacheKey) {
       await exec("ls"); // DEV:
-      const data = fs.readFileSync(this._cacheFilename, "utf-8");
+      const data = fs.readFileSync(this._cacheId, "utf-8");
       return data;
     } else {
       return null;
