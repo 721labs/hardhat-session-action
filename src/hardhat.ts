@@ -53,7 +53,7 @@ class HardhatUtils {
     // Format the network config
     const sessionNetworkConfig = JSON.stringify({
       [sessionId]: {
-        url: `https://tcod.app3.dev/v0/instance/${sessionId}`,
+        url: `https://tcod.app3.dev/api/v0/instance/${sessionId}`,
         chainId: 1337,
       },
     })
