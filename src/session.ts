@@ -5,7 +5,7 @@ import { restoreCache, saveCache } from "@actions/cache";
 import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader, baseAPIConfig } from "./api";
 import { delay } from "./utils";
-import { mkdirP } from "@actions/io";
+import * as io from "@actions/io";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -60,17 +60,19 @@ class Session {
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
     // Create a cache directory
-    await mkdirP(this._cacheId);
+    await io.mkdirP(this._cacheId);
     // First write the session id to the filesystem
     fs.writeFileSync(`./${this._cacheId}/${id}.txt`, id);
     await saveCache([this._cacheId], this._cacheId);
+    // Clean up the cache dir
+    await io.rmRF(this._cacheId);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([`${this._cacheId}/`], this._cacheId);
+    const cacheKey = await restoreCache([this._cacheId], this._cacheId);
     core.info(`CACHE HIT: ${cacheKey}`);
 
     //dev
