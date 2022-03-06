@@ -1,0 +1,5 @@
+node_modules
+
+# Tests
+tests/hardhat/cache
+tests/hardhat/hardhat-session.config.*

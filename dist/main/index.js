@@ -1,0 +1,1 @@
+(()=>{"use strict";if(typeof __nccwpck_require__!=="undefined")__nccwpck_require__.ab=__dirname+"/";var e={};(()=>{var r=e;Object.defineProperty(r,"__esModule",{value:true});try{console.log("Hello World")}catch(e){}})();module.exports=e})();

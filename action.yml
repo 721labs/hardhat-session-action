@@ -1,0 +1,14 @@
+name: Hardhat Session
+author: 721 Labs
+description: "Run your Hardhat tests in a dedicated, session-lived container"
+inputs:
+  cmd:
+    required: true
+    description: "Hardhat cmd with args e.g. `npx hardhat <cmd>`"
+  fresh:
+    required: false
+    description: "Should a new session be started or a previous one attempt to be resumed?"
+    default: false
+runs:
+  using: "node16"
+  main: "dist/main/index.js"

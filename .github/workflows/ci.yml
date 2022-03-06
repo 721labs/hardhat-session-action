@@ -1,0 +1,98 @@
+name: "CI"
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "*"
+env:
+  # Required for build step
+  GIT_SHA: ${{ github.sha }}
+jobs:
+  unit-tests:
+    name: "Unit Tests"
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system:
+          - ubuntu-latest
+          #- windows-latest
+          #- macos-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: "Cache Dependencies"
+        uses: actions/cache@v2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: "Install Dependencies"
+        run: "yarn install"
+      - name: "Test"
+        run: "yarn test"
+  test-action-new-session:
+    name: "Action: Test New Session"
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system:
+          - ubuntu-latest
+          #- windows-latest
+          #- macos-latest
+    #needs: [unit-tests]
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: "Cache Dependencies"
+        uses: actions/cache@v2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: "Install Dependencies"
+        run: "yarn install"
+      - name: "Build"
+        run: "yarn build"
+      - name: "Start new session and run tests"
+        uses: ./
+        with:
+          cmd: test --config ./tests/hardhat/hardhat.config.js
+          fresh: true
+      - name: "Resume session and run tests"
+        uses: ./
+        with:
+          cmd: test --config ./tests/hardhat/hardhat.config.js
+  test-action-session-resumption:
+    name: "Action: Test Session Resumption"
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system:
+          - ubuntu-latest
+          #- windows-latest
+          #- macos-latest
+    needs: [test-action-new-session]
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: "Cache Dependencies"
+        uses: actions/cache@v2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      # read it from the cache to avoid the need for rebuilding each time.
+      - name: "Install Dependencies"
+        run: "yarn install"
+      - name: "Build"
+        run: "yarn build"
+      - name: "Resume session from previous job and run tests"
+        uses: ./
+        with:
+          cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
