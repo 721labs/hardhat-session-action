@@ -70,7 +70,7 @@ describe("HardhatUtils", () => {
 
       before(async () => {
         const sessionId = randomUUID().split("-")[0];
-        networkConfig = `"${sessionId}":{"url":"https://tcod.app3.dev/v0/instance/${sessionId}","chainId":1337`;
+        networkConfig = `"${sessionId}":{"url":"https://tcod.app3.dev/api/v0/instance/${sessionId}","chainId":1337`;
 
         configPathDir = path.dirname(jsConfigPath);
         configMeta = await HardHatUtils.writeSessionConfig(
