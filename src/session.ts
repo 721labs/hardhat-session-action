@@ -71,6 +71,9 @@ class Session {
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
+    // Create a cache directory
+    await io.mkdirP(this._cacheId);
+
     // Check cache (originated w/in previous job).
     const cacheKey = await restoreCache([this._cacheId], this._cacheId);
     core.info(`CACHE HIT: ${cacheKey}`);
