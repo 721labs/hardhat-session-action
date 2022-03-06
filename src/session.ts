@@ -47,19 +47,25 @@ class Session {
     }
   }
 
+  private get _cacheFilePath(): string {
+    return `${this._cacheId}-${this.id}`;
+  }
+
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
     // First write the session id to the filesystem
-    fs.writeFileSync(this._cacheId, id);
-    await saveCache([this._cacheId], `${this._cacheId}-${id}`);
+    fs.writeFileSync(this._cacheFilePath, id);
+    await saveCache([this._cacheFilePath], this._cacheFilePath);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([this._cacheId], "", [this._cacheId]);
-    core.info(`CACHE HIT: ${this._cacheId}`);
+    const cacheKey = await restoreCache([this._cacheFilePath], "", [
+      this._cacheFilePath,
+    ]);
+    core.info(`CACHE HIT: ${cacheKey}`);
 
     // Read id from file
     // TODO: Reading from the cache isn't working.
