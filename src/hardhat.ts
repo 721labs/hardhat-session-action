@@ -4,15 +4,17 @@ import fs from "fs";
 import * as readline from "readline";
 import path from "path";
 
-enum ConfigPreference {
+enum ConfigFileType {
   JS = "js",
   TS = "ts",
 }
 
+type SessionConfigMeta = { path: string; type: ConfigFileType };
+
 class HardhatUtils {
   public static async findConfig(
     cmd: string,
-    preference?: ConfigPreference
+    preference?: ConfigFileType
   ): Promise<string> {
     // Check for passed in `--config` or `--tsconfig` flags
     const match = cmd.match(/--(ts)?config\s(?<path>.+)/);
@@ -37,10 +39,10 @@ class HardhatUtils {
   public static async writeSessionConfig(
     filepath: string,
     sessionId: string
-  ): Promise<string> {
-    const filetype = filepath.endsWith(ConfigPreference.JS)
-      ? ConfigPreference.JS
-      : ConfigPreference.TS;
+  ): Promise<SessionConfigMeta> {
+    const filetype = filepath.endsWith(ConfigFileType.JS)
+      ? ConfigFileType.JS
+      : ConfigFileType.TS;
 
     // Write the session config alongside the existent config
     const configFilePath = path.join(
@@ -77,7 +79,7 @@ class HardhatUtils {
       reader.on("close", () => {
         const data = lines.join("\n");
         fs.writeFileSync(configFilePath, data);
-        resolve(configFilePath);
+        resolve({ path: configFilePath, type: filetype });
       });
     });
   }
@@ -85,16 +87,14 @@ class HardhatUtils {
   public static async addNetwork(
     cmd: string,
     sessionId: string
-  ): Promise<string> {
+  ): Promise<SessionConfigMeta> {
     const filepath = await HardhatUtils.findConfig(cmd);
-    const sessionConfigPath = await HardhatUtils.writeSessionConfig(
-      filepath,
-      sessionId
-    );
+    const config = await HardhatUtils.writeSessionConfig(filepath, sessionId);
 
-    return sessionConfigPath;
+    return config;
   }
 }
 
 export default HardhatUtils;
-export { ConfigPreference };
+export { ConfigFileType };
+export type { SessionConfigMeta };

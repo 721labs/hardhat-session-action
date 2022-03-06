@@ -1,4 +1,5 @@
-import HardHatUtils, { ConfigPreference } from "../../src/hardhat";
+import HardHatUtils, { ConfigFileType } from "../../src/hardhat";
+import type { SessionConfigMeta } from "../../src/hardhat";
 
 import { expect } from "chai";
 
@@ -25,7 +26,7 @@ describe("HardhatUtils", () => {
     });
     it("Can parse a config from the filesystem", async () => {
       const cmd = "yarn hardhat test";
-      const parsed = await HardHatUtils.findConfig(cmd, ConfigPreference.JS);
+      const parsed = await HardHatUtils.findConfig(cmd, ConfigFileType.JS);
       expect(parsed).to.satisfy((path: string) =>
         path.endsWith("/tests/hardhat/hardhat.config.js")
       );
@@ -33,7 +34,7 @@ describe("HardhatUtils", () => {
     });
     it("Can parse a ts config from the filesystem", async () => {
       const cmd = "yarn hardhat test";
-      const parsed = await HardHatUtils.findConfig(cmd, ConfigPreference.TS);
+      const parsed = await HardHatUtils.findConfig(cmd, ConfigFileType.TS);
       expect(parsed).to.satisfy((path: string) =>
         path.endsWith("/tests/hardhat/hardhat.config.ts")
       );
@@ -44,59 +45,67 @@ describe("HardhatUtils", () => {
   context("#writeSessionConfig", () => {
     describe("Updates JS Configs", () => {
       let configPathDir: string;
-      let configFilePath: string;
+      let configMeta: SessionConfigMeta;
 
       before(async () => {
         configPathDir = path.dirname(jsConfigPath);
-        configFilePath = await HardHatUtils.writeSessionConfig(
+        configMeta = await HardHatUtils.writeSessionConfig(
           jsConfigPath,
           "test"
         );
       });
 
       after(() => {
-        fs.rmSync(configFilePath);
+        fs.rmSync(configMeta.path);
       });
 
       it("Writes the config file", () => {
-        expect(configFilePath).to.equal(
+        expect(configMeta.path).to.equal(
           path.join(configPathDir, "hardhat-session.config.js")
         );
       });
 
       it("Config contains network config", () => {
-        const data = fs.readFileSync(configFilePath).toString();
+        const data = fs.readFileSync(configMeta.path).toString();
         const oneLine = data.replaceAll("\n", "");
         expect(oneLine).to.contain(networkConfig);
+      });
+
+      it("Meta contains type", () => {
+        expect(configMeta.type).to.equal(ConfigFileType.JS);
       });
     });
 
     describe("Updates TS Configs", () => {
       let configPathDir: string;
-      let configFilePath: string;
+      let configMeta: SessionConfigMeta;
 
       before(async () => {
         configPathDir = path.dirname(tsConfigPath);
-        configFilePath = await HardHatUtils.writeSessionConfig(
+        configMeta = await HardHatUtils.writeSessionConfig(
           tsConfigPath,
           "test"
         );
       });
 
       after(() => {
-        fs.rmSync(configFilePath);
+        fs.rmSync(configMeta.path);
       });
 
       it("Writes the config file", () => {
-        expect(configFilePath).to.equal(
+        expect(configMeta.path).to.equal(
           path.join(configPathDir, "hardhat-session.config.ts")
         );
       });
 
       it("Config contains network config", () => {
-        const data = fs.readFileSync(configFilePath).toString();
+        const data = fs.readFileSync(configMeta.path).toString();
         const oneLine = data.replaceAll("\n", "");
         expect(oneLine).to.contain(networkConfig);
+      });
+
+      it("Meta contains type", () => {
+        expect(configMeta.type).to.equal(ConfigFileType.TS);
       });
     });
   });
