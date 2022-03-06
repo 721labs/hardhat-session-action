@@ -8,14 +8,12 @@ async function updateHardhatConfig(cmd: string, sessionId: string) {
 
   // Check for passed in `--config` or `--tsconfig` flags
   const match = cmd.match(/--(ts)?config\s(?<path>.+)/);
-  console.log("Dev: Match", match);
-  if (match) filepath = match?.groups?.path as string;
+  if (match) filepath = (match?.groups?.path as string).split(" ")[0];
   else {
     // Glob the filesystem
     const patterns = ["hardhat.config.ts", "hardhat.config.js"];
     const globber = await glob.create(patterns.join("\n"));
     const files = await globber.glob();
-    console.log("DEV: Global Files", files);
     if (files) filepath = files[0];
     else throw core.setFailed("Unable to parse Hardhat config");
   }
