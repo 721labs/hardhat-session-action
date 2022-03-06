@@ -52,47 +52,53 @@ class Session {
    * is deterministic, we can always use it to look up a given Session ID.  To do so, we take
    * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
    */
-  private get _cacheId(): string {
+  private get _cacheKey(): string {
     //@ts-ignore
     return `${this._jobId}`.replaceAll(".", "_");
   }
 
   private get _cachePaths(): Array<string> {
-    return [`**/${this._cacheId}`];
+    return [`**/${this._cacheKey}`];
+  }
+
+  private get _cacheDir(): string {
+    return `./${this._cacheKey}`;
   }
 
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
 
     // Create cache directory
-    await io.mkdirP(this._cacheId);
+    await io.mkdirP(this._cacheDir);
 
     // Write the session id to the cache directory
-    fs.writeFileSync(`${this._cacheId}/${id}`, id);
+    fs.writeFileSync(`${this._cacheDir}/${id}`, id);
 
     // Save the cache directory
-    await saveCache(this._cachePaths, this._cacheId);
+    await saveCache(this._cachePaths, this._cacheKey);
 
     // Delete the cache dir
-    await io.rmRF(this._cacheId);
+    await io.rmRF(this._cacheDir);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
     // Create cache directory
-    await io.mkdirP(this._cacheId);
+    await exec("ls");
+    await io.mkdirP(this._cacheDir);
+    await exec("ls");
 
     // Restore the cache
-    const cacheKey = await restoreCache(this._cachePaths, this._cacheId);
+    const cacheKey = await restoreCache(this._cachePaths, this._cacheKey);
 
     // DEV: View the contents of the cache
-    await exec(`ls ${this._cacheId}`);
+    await exec(`ls ${this._cacheDir}`);
     throw new Error("!");
-    //const id = cacheKey ? fs.readFileSync(this._cacheId).toString() : null;
+    //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
 
     // Delete the cache dir
-    await io.rmRF(this._cacheId);
+    await io.rmRF(this._cacheDir);
 
     //return id;
   }
