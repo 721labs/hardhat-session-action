@@ -39,7 +39,8 @@ class Session {
       },
     });
 
-    this._jobId = `${runId}-${ImageOS}-${nodeVersion}`;
+    //@ts-ignore
+    this._jobId = `${runId}-${ImageOS}-${nodeVersion.replaceAll(".", "_")}`;
   }
 
   private _validateCacheId() {
@@ -48,22 +49,12 @@ class Session {
     }
   }
 
-  /**
-   * Cache ID is used to persist the Session ID between steps and jobs. Because `this._jobId`
-   * is deterministic, we can always use it to look up a given Session ID.  To do so, we take
-   * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
-   */
-  private get _cacheKey(): string {
-    //@ts-ignore
-    return `${this._jobId}`.replaceAll(".", "_");
-  }
-
   private get _cachePaths(): Array<string> {
-    return [`**/${this._cacheKey}`];
+    return [`**/${this._jobId}`];
   }
 
   private get _cacheDir(): string {
-    return `./${this._cacheKey}`;
+    return `./${this._jobId}`;
   }
 
   private async _cacheSessionId(id: string): Promise<void> {
@@ -72,11 +63,16 @@ class Session {
     // Create cache directory
     await io.mkdirP(this._cacheDir);
 
-    // Write the session id to the cache directory
-    fs.writeFileSync(`${this._cacheDir}/${id}`, id);
+    // Write a file to the cache directory
+    fs.writeFileSync(`${this._cacheDir}/.exists`, "1");
 
     // Save the cache directory
-    await saveCache(this._cachePaths, this._cacheKey);
+    /**
+     * Cache ID is used to persist the Session ID between steps and jobs. Because `this._jobId`
+     * is deterministic, we can always use it to look up a given Session ID.  To do so, we take
+     * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
+     */
+    await saveCache(this._cachePaths, `${this._jobId}-${this.id}`);
 
     // Delete the cache dir
     await io.rmRF(this._cacheDir);
@@ -86,20 +82,22 @@ class Session {
     this._validateCacheId();
 
     // Create cache directory
-    console.log("\nBEFORE mkdirP");
-    await exec("ls -l\n");
-    await io.mkdirP(this._cacheDir);
-    console.log("\nAFTER mkdirP");
-    await exec("ls -l\n");
+    // console.log("\nBEFORE mkdirP");
+    // await exec("ls -l\n");
+    // await io.mkdirP(this._cacheDir);
+    // console.log("\nAFTER mkdirP");
+    // await exec("ls -l\n");
 
     // Restore the cache
-    const cacheKey = (
-      await restoreCache(this._cachePaths, this._cacheKey)
-    )?.trim();
+    const cacheKey = await restoreCache(
+      this._cachePaths,
+      this._jobId, // should never hit
+      [`${this._jobId}-`]
+    );
 
-    // console.log(`\nCACHE KEY: ${JSON.stringify({ key: cacheKey })}`);
+    console.log(`\nCACHE KEY: ${cacheKey}`);
 
-    // // DEV: View the contents of the cache
+    // DEV: View the contents of the cache
     // console.log("\nAFTER restoreCache");
     // await exec("ls -l");
 
@@ -110,7 +108,7 @@ class Session {
     // const files = await globber.glob();
     // console.log(files);
 
-    // throw new Error("!");
+    throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
 
     // Delete the cache dir
