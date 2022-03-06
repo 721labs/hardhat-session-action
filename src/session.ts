@@ -3,8 +3,7 @@ import fs from "fs";
 import * as core from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import { exec } from "@actions/exec";
-import api, { HttpMethod, makeTraceHeader } from "./api";
-import axios from "axios";
+import api, { HttpMethod, makeTraceHeader, baseAPIConfig } from "./api";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -76,23 +75,21 @@ class Session {
     method: HttpMethod,
     endpoint: string
   ): Promise<AxiosPromise> {
+    const headers = { ...makeTraceHeader() };
     try {
       return await api({
         method,
         url: endpoint,
-        headers: { ...makeTraceHeader() },
+        headers,
       });
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        // Access to config, request, and response
-        core.error(
-          JSON.stringify({
-            method,
-            url: endpoint,
-            headers: error.request.headers,
-          })
-        );
-      }
+      core.error(
+        JSON.stringify({
+          method,
+          url: endpoint,
+          headers: { ...headers, ...baseAPIConfig },
+        })
+      );
       throw error;
     }
   }
