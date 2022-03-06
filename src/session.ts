@@ -59,8 +59,9 @@ class Session {
     this._validateCacheId();
     // Create a cache directory
     await exec(`mkdir ${this._cacheId}`);
+    await exec("ls -l");
     // First write the session id to the filesystem
-    fs.writeFileSync(`${this._cacheId}/${id}.txt`, id);
+    fs.writeFileSync(`./${this._cacheId}/${id}.txt`, id);
 
     //dev
     await exec("ls -l");
