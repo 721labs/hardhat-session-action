@@ -7,7 +7,7 @@ async function updateHardhatConfig(cmd: string, sessionId: string) {
   let filepath: string;
 
   // Check for passed in `--config` or `--tsconfig` flags
-  const match = cmd.match(/--(ts)?config\s(?<path>.+)\s/);
+  const match = cmd.match(/--(ts)?config\s(?<path>.+)/);
   console.log("Dev: Match", match);
   if (match) filepath = match?.groups?.path as string;
   else {
