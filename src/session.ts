@@ -16,15 +16,16 @@ const runId = parseInt(GITHUB_RUN_ID as string, 10);
 const MAX_RETRY_TIMEOUT = 1000 * 20; // wait up to 20s for the session to start
 
 class Session {
-  public id?: string;
-  private _cacheId: string = "";
+  public id?: string = "";
+  private _jobId: string = "";
 
   private _retryTimer: number = 0;
 
   /**
    * The session is accessible via all jobs of a given matrix-configuration within this workflow.
+   * As a result, we need to gather the matrix configuration during setup.
    */
-  private async _buildCacheId() {
+  private async _buildJobMatrix() {
     let nodeVersion = "";
 
     await exec("node -v", [], {
@@ -36,43 +37,40 @@ class Session {
       },
     });
 
-    this._cacheId = `${runId}-${ImageOS}-${nodeVersion}`;
+    this._jobId = `${runId}-${ImageOS}-${nodeVersion}`;
   }
 
   private _validateCacheId() {
-    if (this._cacheId === "") {
+    if (this._jobId === "") {
       throw new Error("session.setup must be called to accessing the cache!");
-    } else {
-      core.info(`Using Cache: ${this._cacheId}`);
     }
   }
 
-  private get _cacheFilePath(): string {
-    return `${this._cacheId}-${this.id}`;
+  /**
+   * Cache ID is used to persist the Session ID between steps and jobs. Because `this._jobId`
+   * is deterministic, we can always use it to look up a given Session ID.  To do so, we take
+   * advantage of GitHub's `restoreCache` mechanism which allows for fragments to be passed in.
+   */
+  private get _cacheId(): string {
+    return `${this._jobId}_${this.id}`;
   }
 
   private async _cacheSessionId(id: string): Promise<void> {
     this._validateCacheId();
     // First write the session id to the filesystem
-    fs.writeFileSync(this._cacheFilePath, id);
-    await saveCache([this._cacheFilePath], this._cacheFilePath);
+    fs.writeFileSync(this._cacheId, id);
+    await saveCache([this._cacheId], this._cacheId);
   }
 
   private async _decacheSessionId(): Promise<string | null> {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([this._cacheFilePath], "", [
-      this._cacheFilePath,
-    ]);
-    core.info(`CACHE HIT: ${cacheKey}`);
+    const cacheKey = await restoreCache([this._cacheId], "", [this._cacheId]);
+    core.info(`CACHE HIT: ${cacheKey?.split("_")[1]}`);
 
-    // Read id from file
-    // TODO: Reading from the cache isn't working.
     if (cacheKey) {
-      await exec("ls"); // DEV:
-      const data = fs.readFileSync(this._cacheId, "utf-8");
-      return data;
+      return cacheKey?.split("_")[1];
     } else {
       return null;
     }
@@ -110,7 +108,7 @@ class Session {
   }
 
   async setup(): Promise<void> {
-    await this._buildCacheId();
+    await this._buildJobMatrix();
   }
 
   async start(): Promise<void> {
@@ -118,9 +116,9 @@ class Session {
       // Create a new session
       const { data } = await this._request(HttpMethod.Post, "instance");
 
-      await this._cacheSessionId(data.id);
-
       this.id = data.id;
+
+      await this._cacheSessionId(data.id);
 
       core.info(`Session Started: ${data.id}`);
     } catch (error) {
