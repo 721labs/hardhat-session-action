@@ -85,15 +85,20 @@ class Session {
     this._validateCacheId();
 
     // Create cache directory
-    await exec("ls");
+    console.log("\nBEFORE mkdirP");
+    await exec("ls -l\n");
     await io.mkdirP(this._cacheDir);
-    await exec("ls");
+    console.log("\nAFTER mkdirP");
+    await exec("ls -l\n");
 
     // Restore the cache
     const cacheKey = await restoreCache(this._cachePaths, this._cacheKey);
 
+    console.log(`CACHE KEY: ${cacheKey}`);
+
     // DEV: View the contents of the cache
-    await exec(`ls ${this._cacheDir}`);
+    console.log("\nAFTER restoreCache");
+    await exec("ls -l");
     throw new Error("!");
     //const id = cacheKey ? fs.readFileSync(this._cacheKey).toString() : null;
 
