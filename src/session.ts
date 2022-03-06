@@ -4,6 +4,7 @@ import * as core from "@actions/core";
 import { restoreCache, saveCache } from "@actions/cache";
 import { exec } from "@actions/exec";
 import api, { HttpMethod, makeTraceHeader, baseAPIConfig } from "./api";
+import { delay } from "./utils";
 
 // Types
 import type { AxiosPromise } from "axios";
@@ -12,9 +13,13 @@ import type { AxiosPromise } from "axios";
 const { ImageOS, GITHUB_RUN_ID } = process.env;
 const runId = parseInt(GITHUB_RUN_ID as string, 10);
 
+const MAX_RETRY_TIMEOUT = 1000 * 20; // wait up to 20s for the session to start
+
 class Session {
   private _id?: string;
   private _cacheId: string = "";
+
+  private _retryTimer: number = 0;
 
   /**
    * The session is accessible via all jobs of a given matrix-configuration within this workflow.
@@ -63,7 +68,6 @@ class Session {
 
     // Read id from file
     if (cacheKey) {
-      core.info(`Cache Key: ${cacheKey}`);
       const data = fs.readFileSync(this._cacheFilename, "utf-8");
       return data;
     } else {
@@ -123,6 +127,27 @@ class Session {
     } else {
       core.info("No Session Found");
       return false;
+    }
+  }
+
+  async waitUntilReady(): Promise<void> {
+    const { data } = await this._request(
+      HttpMethod.Get,
+      `instance/${this._id}/status`
+    );
+    if (data.status === "Ready") return;
+    else if (data.status === "Swept") {
+      // TODO: Do a better job handling.
+      throw new Error("Session Swept");
+    } else {
+      if (this._retryTimer < MAX_RETRY_TIMEOUT) {
+        await delay(3000);
+        this._retryTimer += 3000;
+        await this.waitUntilReady();
+      } else {
+        // TODO: Do a better job handling.
+        throw new Error("Session took to long to ready");
+      }
     }
   }
 }

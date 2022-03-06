@@ -38,6 +38,7 @@ import Session from "./session";
     }
 
     // Block until the new session is ready to go
+    await session.waitUntilReady();
 
     // Write endpoint to Hardhat Config
     // Check for passed in `--config` or `--tsconfig` flags
