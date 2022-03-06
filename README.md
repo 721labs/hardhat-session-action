@@ -11,12 +11,13 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
 ```yaml
 - uses: 721labs/hardhat-session-action@master
   with:
-    # The Hardhat command you want to run within the session container.
+    # The Hardhat command, including flags, you wish to run within the session container.
     # For example:
     # $ npx hardhat <cmd>
+    # $ npx hardhat run test --show-stack-traces --verbose
     # Type: String
     # Required: True
-    cmd: test --config ./tests/hardhat/hardhat.config.js
+    cmd: ""
     # Start a new session or attempt to resume the previous session?
     # Type: Boolean
     # Required: False
