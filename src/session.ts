@@ -94,7 +94,7 @@ class Session {
     // Delete the cache dir
     await io.rmRF(this._cacheId);
 
-    return id;
+    //return id;
   }
 
   private async _request(
