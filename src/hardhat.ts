@@ -99,12 +99,26 @@ class HardhatUtils {
    * @param cmd
    * @returns cmd without config flag.
    */
-  public static stripConfigFlag(cmd: string): string {
-    const match = cmd.match(/(?<flag>\s--(ts)?config\s(\w|\.|\/)+)/);
-    if (match) {
-      const flag = match?.groups?.flag as string;
-      return cmd.replace(flag, "");
-    } else return cmd;
+  public static stripFlags(cmd: string): string {
+
+    let clean: string = cmd;
+
+    // Strip `--config` and `--tsconfig`
+    const confMatch = cmd.match(/(?<flag>\s--(ts)?config\s(\w|\.|\/)+)/);
+    if (confMatch) {
+      const flag = confMatch?.groups?.flag as string;
+      clean = clean.replace(flag, "");
+    }
+
+    // Strip `--network`
+    const netMatch = clean.match(/(?<network>\s--network\s(\w+))/);
+    if(netMatch){
+      const network = netMatch?.groups?.network as string;
+      clean = clean.replace(network, "")
+    }
+    
+
+    return clean;
   }
 }
 

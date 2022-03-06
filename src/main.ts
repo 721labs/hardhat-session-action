@@ -42,7 +42,7 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
     // Write the session Hardhat config
     const configMeta = await HardhatUtils.addNetwork(cmd, session.id as string);
 
-    const cmdWithoutConfig = HardhatUtils.stripConfigFlag(cmd);
+    const cleanCmd = HardhatUtils.stripFlags(cmd);
 
     // Block until the new session is ready to go
     await session.waitUntilReady();
@@ -51,7 +51,7 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
     const configFlag =
       configMeta.type === ConfigFileType.JS ? "config" : "tsconfig";
     await exec(
-      `yarn hardhat ${cmdWithoutConfig} --${configFlag} ${configMeta.path} --network ${session.id}`
+      `yarn hardhat ${cleanCmd} --${configFlag} ${configMeta.path} --network ${session.id}`
     );
 
     // Clean up

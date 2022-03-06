@@ -11,25 +11,44 @@ describe("HardhatUtils", () => {
   let jsConfigPath: string;
   let tsConfigPath: string;
 
-  context("#stripConfigFlag", () => {
+  context("#stripFlags", () => {
+
     it("strips --config", () => {
       expect(
-        HardHatUtils.stripConfigFlag(
+        HardHatUtils.stripFlags(
           "yarn hardhat test --config subdir/hardhat.config.js"
         )
       ).to.equal("yarn hardhat test");
     });
+
     it("strips --tsconfig", () => {
       expect(
-        HardHatUtils.stripConfigFlag(
+        HardHatUtils.stripFlags(
           "yarn hardhat --tsconfig hardhat.config.ts --help"
         )
       ).to.equal("yarn hardhat --help");
     });
-    it("does not strip when no config is present", () => {
-      expect(HardHatUtils.stripConfigFlag("yarn hardhat --version")).to.equal(
+
+    it("does not strip when {--config|--tsconfig|--network} is absent", () => {
+      expect(HardHatUtils.stripFlags("yarn hardhat --version")).to.equal(
         "yarn hardhat --version"
       );
+    });
+
+    it("strips --network", () => {
+      expect(
+        HardHatUtils.stripFlags(
+          "yarn hardhat node --network localhost"
+        )
+      ).to.equal("yarn hardhat node");
+    });
+
+    it("strips multiple flags simultaneously (e.g. `--config && --network`)", () => {
+      expect(
+        HardHatUtils.stripFlags(
+          "yarn hardhat node --network localhost --tsconfig hardhat.config.ts"
+        )
+      ).to.equal("yarn hardhat node");
     });
   });
 
