@@ -66,7 +66,9 @@ class Session {
     this._validateCacheId();
 
     // Check cache (originated w/in previous job).
-    const cacheKey = await restoreCache([this._cacheId], "", [this._cacheId]);
+    const cacheKey = await restoreCache([`${this._jobId}_*`], "", [
+      this._jobId,
+    ]);
     core.info(`CACHE HIT: ${cacheKey}`);
 
     // DEV: Intentionally fail
