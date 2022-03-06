@@ -92,8 +92,6 @@ describe("HardhatUtils", () => {
       it("Config contains network config", () => {
         const data = fs.readFileSync(configMeta.path).toString();
         const oneLine = data.replaceAll("\n", "");
-        console.log(oneLine);
-        console.log(networkConfig);
         expect(oneLine).to.contain(networkConfig);
       });
 
