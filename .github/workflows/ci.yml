@@ -41,7 +41,7 @@ jobs:
           - ubuntu-latest
           #- windows-latest
           #- macos-latest
-    needs: [unit-tests]
+    #needs: [unit-tests]
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
