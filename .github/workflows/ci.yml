@@ -60,7 +60,7 @@ jobs:
       - name: "Start new session and run tests"
         uses: ./
         with:
-          cmd: test --config ./tests/hardhat/hardhat.config.js
+          cmd: test --network localhost --config ./tests/hardhat/hardhat.config.js
           fresh: true
       - name: "Resume session and run tests"
         uses: ./
