@@ -8,3 +8,5 @@
 
 - Bugfix: Does not break if `--network` flag is included in cmd.
 - Bugfix: Does not break if cmd is `node`.
+- Bugfix: Supports custom tasks.
+- Adds: `uses.working-directory`

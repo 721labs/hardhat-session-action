@@ -1,12 +1,28 @@
 import * as core from "@actions/core";
 import { exec } from "@actions/exec";
 import * as io from "@actions/io";
+import * as glob from "@actions/glob";
 
 import Session from "./session";
 import HardhatUtils, { ConfigFileType } from "./hardhat";
 
 (async () => {
   try {
+    // If working dir is passed in, navigate to this directory
+    const workingDir = core.getInput("working-directory");
+    if (workingDir) await exec(`cd ${workingDir}`);
+
+    // Validate that the current directory contains a package.json file
+    // i.e. that it's the Hardhat project directory.
+    const globber = await glob.create("package.json", {
+      followSymbolicLinks: false
+    });
+    const files = await globber.glob();
+    if (!files) {
+      core.error("Action must be run within your Hardhat project");
+      return;
+    }
+
     // Validate that command is being run within a Hardhat project and that
     // it is a valid command.
     const cmd = core.getInput("cmd", { required: true });

@@ -27,4 +27,9 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
     # Required: False
     # Default: false
     fresh: true
+    # Directory containing your Hardhat project if not the root dir.
+    # Note that the action does not read job.defaults.run.working_directory.
+    # Type: String
+    # Required: False
+    working-directory: ""
 ```

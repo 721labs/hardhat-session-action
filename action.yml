@@ -9,6 +9,10 @@ inputs:
     required: false
     description: "Should a new session be started or a previous one attempt to be resumed?"
     default: false
+  working-directory:
+    required: false
+    description: "Directory containing your Hardhat project, if not root."
+    default: ""
 runs:
   using: "node16"
   main: "dist/main/index.js"
