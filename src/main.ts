@@ -31,6 +31,7 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
 
     try {
       // DEV: List the valid commands
+      await exec("ls");
       await exec(`yarn hardhat --help`);
       await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
     } catch (error) {
