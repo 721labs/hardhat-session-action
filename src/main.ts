@@ -46,7 +46,6 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
     // Then check against user-defined commands.
 
     try {
-      await exec("pwd");
       await exec(`yarn hardhat ${cmd} --help`, [], { silent: true });
     } catch (error) {
       core.setFailed(`Invalid Command: yarn hardhat ${cmd}`);
