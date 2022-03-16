@@ -27,7 +27,7 @@ import * as glob from "@actions/glob";
 
     if (cmd.includes("node")) {
       throw {
-        message: "This has no effect: session node is already running"
+        message: "cmd `node` no effect: session node is already running"
       };
     }
 
