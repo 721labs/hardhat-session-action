@@ -18,6 +18,8 @@ runs:
   #main: "dist/main/index.js"
   using: "composite"
   steps:
+    - run: "printenv"
+      shell: "bash"
     - run: "node dist/main/index.js"
       shell: "bash"
       working-directory: ${{ inputs.working-directory }}
