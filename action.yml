@@ -12,7 +12,7 @@ inputs:
   working-directory:
     required: false
     description: "Directory containing your Hardhat project, if not root."
-    default: ""
+    default: "."
 runs:
   using: "node16"
   main: "dist/main/index.js"
