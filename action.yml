@@ -22,8 +22,8 @@ runs:
       shell: "bash"
       working-directory: ${{ inputs.working-directory }}
       env:
-        cmd: ${{ inputs.cmd }}
-        fresh: ${{ inputs.fresh }}
+        INPUT_CWD: ${{ inputs.cmd }}
+        INPUT_FRESH: ${{ inputs.fresh }}
 branding:
   color: "red"
   icon: "box"
