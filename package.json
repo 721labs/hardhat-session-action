@@ -2,7 +2,9 @@
   "version": "0.0.1",
   "author": "721 Labs (https://721.dev)",
   "scripts": {
-    "build": "ncc build -m src/main.ts -o dist/main",
+    "build:pre": "ncc build -m src/pre.ts -o dist/pre",
+    "build:main": "ncc build -m src/main.ts -o dist/main",
+    "build": "yarn build:pre && yarn build:main",
     "test": "mocha -r ts-node/register -t 180s 'tests/unit/*.spec.ts'",
     "prettier": "prettier -w src/*.ts"
   },
