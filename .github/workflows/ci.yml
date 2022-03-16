@@ -75,7 +75,6 @@ jobs:
         with:
           cmd: hello-world --config ./tests/package/hardhat.config.js
           working-directory: ./tests/package
-        working-directory: ./tests/package
       - name: "Resume session and run tests"
         uses: ./
         with:
