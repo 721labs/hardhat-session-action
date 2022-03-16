@@ -14,8 +14,12 @@ inputs:
     description: "Directory containing your Hardhat project, if not root."
     default: "."
 runs:
-  using: "node16"
-  main: "dist/main/index.js"
+  #using: "node16"
+  #main: "dist/main/index.js"
+  using: "composite"
+  steps:
+    - run: "node dist/main/index.js"
+      working-directory: ${{ inputs.working-directory }}
 branding:
   color: "red"
   icon: "box"

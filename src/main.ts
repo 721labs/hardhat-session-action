@@ -9,14 +9,14 @@ import HardhatUtils, { ConfigFileType } from "./hardhat";
 (async () => {
   try {
     // Navigate to the working directory
-    const workingDir = core.getInput("working-directory");
+    // const workingDir = core.getInput("working-directory");
 
-    // TODO: Make this work.
-    console.log("Current Dir:");
-    await exec("pwd");
-    console.log("Requested Dir:", workingDir);
-    await exec("cd", [workingDir]);
-    return;
+    // // TODO: Make this work.
+    // console.log("Current Dir:");
+    // await exec("pwd");
+    // console.log("Requested Dir:", workingDir);
+    // await exec("cd", [workingDir]);
+    // return;
 
     // Validate that the current directory contains a package.json file
     // i.e. that it's the Hardhat project directory.
