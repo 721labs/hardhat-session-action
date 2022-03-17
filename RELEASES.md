@@ -7,6 +7,8 @@
 ### v0.0.2-alpha
 
 - Bugfix: Does not break if `--network` flag is included in cmd.
-- Bugfix: Does not break if cmd is `node`.
+- Bugfix: Intentionally break if cmd is `node`.
 - Bugfix: Supports custom tasks.
-- Adds: `uses.working-directory`
+- Adds: `uses.hardhat-directory`
+- Adds: Passing session ID as output
+- Internal: Switches to a composite strategy.
