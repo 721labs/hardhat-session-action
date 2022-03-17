@@ -1,5 +1,5 @@
-import HardHatUtils, { ConfigFileType } from "../../src/hardhat";
-import type { SessionConfigMeta } from "../../src/hardhat";
+import HardHatUtils, { ConfigFileType } from "../../src/lib/hardhat";
+import type { SessionConfigMeta } from "../../src/lib/hardhat";
 
 import { expect } from "chai";
 
@@ -12,7 +12,6 @@ describe("HardhatUtils", () => {
   let tsConfigPath: string;
 
   context("#stripFlags", () => {
-
     it("strips --config", () => {
       expect(
         HardHatUtils.stripFlags(
@@ -37,9 +36,7 @@ describe("HardhatUtils", () => {
 
     it("strips --network", () => {
       expect(
-        HardHatUtils.stripFlags(
-          "yarn hardhat node --network localhost"
-        )
+        HardHatUtils.stripFlags("yarn hardhat node --network localhost")
       ).to.equal("yarn hardhat node");
     });
 
