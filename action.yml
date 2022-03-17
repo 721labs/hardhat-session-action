@@ -17,16 +17,14 @@ outputs:
     description: "Resumed session ID or newly started session ID"
     value: ${{ inputs.session-id || steps.start-session.outputs.session-id }}
 runs:
-  #using: "node16"
-  #main: "dist/main/index.js"
   using: "composite"
   steps:
-    - name: "Pre"
-      run: "node dist/pre/index.js"
-      shell: "bash"
-      working-directory: ${{ inputs.working-directory }}
-      env:
-        INPUT_CMD: ${{ inputs.cmd }}
+    # - name: "Pre"
+    #   run: "node dist/pre/index.js"
+    #   shell: "bash"
+    #   working-directory: ${{ inputs.working-directory }}
+    #   env:
+    #     INPUT_CMD: ${{ inputs.cmd }}
     - name: "DEV: Print Resumed Session ID"
       run: echo ${{ inputs.sessionId }}
       shell: "bash"
