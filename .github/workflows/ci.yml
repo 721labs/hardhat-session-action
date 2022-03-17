@@ -62,6 +62,8 @@ jobs:
         uses: ./
         with:
           cmd: hsa:print --message "CI" --config ./tests/hardhat/hardhat.config.js
+        outputs:
+          session-id: ${{ steps.start-session.outputs._session-id }}
       - name: "Install tests/package dependencies"
         run: "yarn install"
         working-directory: ./tests/package

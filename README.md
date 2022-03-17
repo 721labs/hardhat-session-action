@@ -33,4 +33,6 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
     # Type: String
     # Required: False
     working-directory: ""
+  outputs:
+    session-id: ${{ steps.start-session.outputs._session-id }}
 ```

@@ -13,9 +13,9 @@ inputs:
     description: "Directory containing your Hardhat project, if not root."
     default: "."
 outputs:
-  session-id:
-    description: "Resumed session ID or newly started session ID"
-    value: ${{ inputs.session-id || steps.start-session.outputs.session-id }}
+  _session-id:
+    description: "Newly started session ID"
+    value: ${{ steps.start-session.outputs.session-id }}
 runs:
   using: "composite"
   steps:
