@@ -28,7 +28,8 @@ steps:
       # Required: True
       cmd: ""
       # ID of session to resume; acquired through a previous output.
-      # e.g. `${{ steps.previously-started-session.outputs.session-id }}`
+      # e.g. Started in same job, previous step: `${{ steps.previously-started-session.outputs.session-id }}`
+      # e.g. Started in previous job: `${{ needs.test-action-new-session.outputs.session-id }}`
       # Type: String
       # Required: False
       session-id: ""
