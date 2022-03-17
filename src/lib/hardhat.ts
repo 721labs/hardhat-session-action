@@ -59,7 +59,7 @@ class HardhatUtils {
       }
     })
       .replace(`{"${sessionId}"`, `"${sessionId}"`)
-      .replace("}}", "}");
+      .replace("}}", "},");
 
     // Read the file
 
