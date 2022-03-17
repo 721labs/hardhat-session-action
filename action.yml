@@ -35,8 +35,7 @@ runs:
       id: start-session
       run: "node dist/main/index.js"
       shell: "bash"
-      working-directory: ${{ inputs.working-directory }}
-      if: ${{ inputs.sessionId != null }}
+      if: ${{ inputs.sessionId == null }}
       # env:
       #   INPUT_CMD: ${{ inputs.cmd }}
       #   INPUT_FRESH: ${{ inputs.fresh }}
