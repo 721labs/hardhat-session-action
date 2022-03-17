@@ -70,8 +70,11 @@ class HardhatUtils {
     });
 
     reader.on("line", (line: string) => {
-      if (line.startsWith("networks:")) {
+      if (line.match(/"?networks"?:\s?{\s?},?/)) {
         lines.push(`networks: {${sessionNetworkConfig}},`);
+      } else if (line.includes("networks: {")) {
+        lines.push(line);
+        lines.push(sessionNetworkConfig);
       } else {
         lines.push(line);
       }
