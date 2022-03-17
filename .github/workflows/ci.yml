@@ -43,6 +43,8 @@ jobs:
           #- windows-latest
           #- macos-latest
     #needs: [unit-tests]
+    outputs:
+      session-id: ${{ steps.start-session.outputs.session-id }}
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
@@ -62,8 +64,6 @@ jobs:
         uses: ./
         with:
           cmd: hsa:print --message "CI" --config ./tests/hardhat/hardhat.config.js
-        outputs:
-          session-id: ${{ steps.start-session.outputs._session-id }}
       - name: "Install tests/package dependencies"
         run: "yarn install"
         working-directory: ./tests/package

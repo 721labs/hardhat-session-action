@@ -13,7 +13,7 @@ inputs:
     description: "Directory containing your Hardhat project, if not root."
     default: "."
 outputs:
-  _session-id:
+  session-id:
     description: "Newly started session ID"
     value: ${{ steps.start-session.outputs.session-id }}
 runs:
