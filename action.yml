@@ -60,7 +60,9 @@ runs:
         sessionId: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
 
     - name: "Run Hardhat Command"
-      run: yarn hardhat ${{ steps.config-hardhat.outputs.clean-cmd }} --${{ steps.config-hardhat.outputs.config-flag }} ${{ steps.config-hardhat.outputs.config-path }} --network $SESSION_ID
+      run: |
+        echo "$(<${{ steps.config-hardhat.outputs.config-path }} )"
+        yarn hardhat ${{ steps.config-hardhat.outputs.clean-cmd }} --${{ steps.config-hardhat.outputs.config-flag }} ${{ steps.config-hardhat.outputs.config-path }} --network $SESSION_ID
       shell: "bash"
       working-directory: ${{ inputs.hardhat-directory }}
       env:
