@@ -25,15 +25,16 @@ runs:
     #   working-directory: ${{ inputs.working-directory }}
     #   env:
     #     INPUT_CMD: ${{ inputs.cmd }}
-    - name: "DEV: Print Resumed Session ID"
-      run: echo ${{ inputs.sessionId }}
+    - name: "Resuming Session"
+      run: |
+        echo "Session Resumed: ${{ inputs.session-id }}"
       shell: "bash"
-      if: ${{ inputs.sessionId }}
+      if: ${{ inputs.session-id }}
     - name: "Start Session"
       id: start-session
       run: "node dist/main/index.js"
       shell: "bash"
-      if: ${{ inputs.sessionId == null }}
+      if: ${{ inputs.session-id == null }}
       # env:
       #   INPUT_CMD: ${{ inputs.cmd }}
       #   INPUT_FRESH: ${{ inputs.fresh }}
