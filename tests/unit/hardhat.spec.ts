@@ -20,15 +20,7 @@ describe("HardhatUtils", () => {
       ).to.equal("yarn hardhat test");
     });
 
-    it("strips --tsconfig", () => {
-      expect(
-        HardHatUtils.stripFlags(
-          "yarn hardhat --tsconfig hardhat.config.ts --help"
-        )
-      ).to.equal("yarn hardhat --help");
-    });
-
-    it("does not strip when {--config|--tsconfig|--network} is absent", () => {
+    it("does not strip when {--config|--network} is absent", () => {
       expect(HardHatUtils.stripFlags("yarn hardhat --version")).to.equal(
         "yarn hardhat --version"
       );
@@ -43,7 +35,7 @@ describe("HardhatUtils", () => {
     it("strips multiple flags simultaneously (e.g. `--config && --network`)", () => {
       expect(
         HardHatUtils.stripFlags(
-          "yarn hardhat node --network localhost --tsconfig hardhat.config.ts"
+          "yarn hardhat node --network localhost --config hardhat.config.ts"
         )
       ).to.equal("yarn hardhat node");
     });
@@ -56,7 +48,7 @@ describe("HardhatUtils", () => {
       expect(parsed).to.equal("sub/test.js");
     });
     it("Can parse a ts config from a cmd", async () => {
-      const cmd = "yarn hardhat test --tsconfig test.ts --help";
+      const cmd = "yarn hardhat test --config test.ts --help";
       const parsed = await HardHatUtils.findConfig(cmd);
       expect(parsed).to.equal("test.ts");
     });

@@ -36,7 +36,7 @@ steps:
       session-id: ""
       # Directory containing your Hardhat project if it's not contained within root.
       # Note that the action does not read job.defaults.run.working_directory.
-      # If `hardhat-directory` is set, it's unnecessary to pass `--config` or `--tsconfig` within `cmd`.
+      # If `hardhat-directory` is set, it's unnecessary to pass `--config` within `cmd`.
       # Type: String
       # Required: False
       hardhat-directory: ""
