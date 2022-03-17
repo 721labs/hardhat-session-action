@@ -8,7 +8,7 @@ inputs:
   session-id:
     required: false
     description: "ID of session to resume; passed in from previous job"
-  working-directory:
+  hardhat-directory:
     required: false
     description: "Directory containing your Hardhat project, if not root."
     default: "."
@@ -19,14 +19,14 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: "Copy pre into working-dir"
-      run: cp dist/pre/index.js ${{ inputs.working-directory }}/pre.js
+    - name: "Copy pre into hardhat-dir"
+      run: cp dist/pre/index.js ${{ inputs.hardhat-directory }}/pre.js
       shell: "bash"
 
     - name: "Validate Command"
       run: "node pre.js"
       shell: "bash"
-      working-directory: ${{ inputs.working-directory }}
+      working-directory: ${{ inputs.hardhat-directory }}
       env:
         INPUT_CMD: ${{ inputs.cmd }}
 

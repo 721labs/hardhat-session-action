@@ -67,12 +67,12 @@ jobs:
       - name: "Install tests/package dependencies"
         run: "yarn install"
         working-directory: ./tests/package
-      - name: "Resume session in package (requires working-directory)"
+      - name: "Resume session in package (requires hardhat-directory)"
         uses: ./
         with:
-          cmd: hello-world --config ./tests/package/hardhat.config.js
+          cmd: hello-world # no need to pass in `--config` because `hardhat-directory` is set
           session-id: ${{ steps.start-session.outputs.session-id }}
-          working-directory: ./tests/package
+          hardhat-directory: ./tests/package
       - name: "Resume session and run tests"
         uses: ./
         with:
