@@ -6,7 +6,7 @@ import { randomUUID } from "crypto";
 
 enum HttpMethod {
   Get = "GET",
-  Post = "POST",
+  Post = "POST"
 }
 
 // Constants
@@ -20,8 +20,8 @@ const baseAPIConfig = {
   baseURL: "https://tcod.app3.dev/api/v0",
   headers: {
     [RELEASE_KEY]: process.env.GIT_SHA || "",
-    [VERSION_KEY]: VERSION,
-  },
+    [VERSION_KEY]: VERSION
+  }
 };
 
 const api = axios.create(baseAPIConfig);

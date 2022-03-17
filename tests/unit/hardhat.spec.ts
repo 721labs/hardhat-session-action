@@ -1,5 +1,5 @@
-import HardHatUtils, { ConfigFileType } from "../../src/hardhat";
-import type { SessionConfigMeta } from "../../src/hardhat";
+import HardHatUtils, { ConfigFileType } from "../../src/lib/hardhat";
+import type { SessionConfigMeta } from "../../src/lib/hardhat";
 
 import { expect } from "chai";
 
@@ -11,25 +11,33 @@ describe("HardhatUtils", () => {
   let jsConfigPath: string;
   let tsConfigPath: string;
 
-  context("#stripConfigFlag", () => {
+  context("#stripFlags", () => {
     it("strips --config", () => {
       expect(
-        HardHatUtils.stripConfigFlag(
+        HardHatUtils.stripFlags(
           "yarn hardhat test --config subdir/hardhat.config.js"
         )
       ).to.equal("yarn hardhat test");
     });
-    it("strips --tsconfig", () => {
-      expect(
-        HardHatUtils.stripConfigFlag(
-          "yarn hardhat --tsconfig hardhat.config.ts --help"
-        )
-      ).to.equal("yarn hardhat --help");
-    });
-    it("does not strip when no config is present", () => {
-      expect(HardHatUtils.stripConfigFlag("yarn hardhat --version")).to.equal(
+
+    it("does not strip when {--config|--network} is absent", () => {
+      expect(HardHatUtils.stripFlags("yarn hardhat --version")).to.equal(
         "yarn hardhat --version"
       );
+    });
+
+    it("strips --network", () => {
+      expect(
+        HardHatUtils.stripFlags("yarn hardhat node --network localhost")
+      ).to.equal("yarn hardhat node");
+    });
+
+    it("strips multiple flags simultaneously (e.g. `--config && --network`)", () => {
+      expect(
+        HardHatUtils.stripFlags(
+          "yarn hardhat node --network localhost --config hardhat.config.ts"
+        )
+      ).to.equal("yarn hardhat node");
     });
   });
 
@@ -40,7 +48,7 @@ describe("HardhatUtils", () => {
       expect(parsed).to.equal("sub/test.js");
     });
     it("Can parse a ts config from a cmd", async () => {
-      const cmd = "yarn hardhat test --tsconfig test.ts --help";
+      const cmd = "yarn hardhat test --config test.ts --help";
       const parsed = await HardHatUtils.findConfig(cmd);
       expect(parsed).to.equal("test.ts");
     });
@@ -70,7 +78,7 @@ describe("HardhatUtils", () => {
 
       before(async () => {
         const sessionId = randomUUID().split("-")[0];
-        networkConfig = `"${sessionId}":{"url":"https://tcod.app3.dev/api/v0/instance/${sessionId}","chainId":1337`;
+        networkConfig = `"${sessionId}":{url:"https://tcod.app3.dev/api/v0/instance/${sessionId}",chainId:1337},`;
 
         configPathDir = path.dirname(jsConfigPath);
         configMeta = await HardHatUtils.writeSessionConfig(
@@ -92,8 +100,6 @@ describe("HardhatUtils", () => {
       it("Config contains network config", () => {
         const data = fs.readFileSync(configMeta.path).toString();
         const oneLine = data.replaceAll("\n", "");
-        console.log(oneLine);
-        console.log(networkConfig);
         expect(oneLine).to.contain(networkConfig);
       });
 
@@ -109,7 +115,7 @@ describe("HardhatUtils", () => {
 
       before(async () => {
         const sessionId = randomUUID().split("-")[0];
-        networkConfig = `"${sessionId}":{"url":"https://tcod.app3.dev/api/v0/instance/${sessionId}","chainId":1337`;
+        networkConfig = `"${sessionId}":{url:"https://tcod.app3.dev/api/v0/instance/${sessionId}",chainId:1337},`;
 
         configPathDir = path.dirname(tsConfigPath);
         configMeta = await HardHatUtils.writeSessionConfig(

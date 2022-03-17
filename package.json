@@ -2,8 +2,13 @@
   "version": "0.0.1",
   "author": "721 Labs (https://721.dev)",
   "scripts": {
-    "build": "ncc build -m src/main.ts -o dist/main",
-    "test": "mocha -r ts-node/register -t 180s 'tests/unit/*.spec.ts'"
+    "build:pre": "ncc build -m src/pre.ts -o dist/pre",
+    "build:main": "ncc build -m src/main.ts -o dist/main",
+    "build:hh-config": "ncc build -m src/hh-config.ts -o dist/hh-config",
+    "build:wait": "ncc build -m src/wait.ts -o dist/wait",
+    "build": "yarn build:pre && yarn build:main && yarn build:hh-config && yarn build:wait",
+    "test": "mocha -r ts-node/register -t 180s 'tests/unit/*.spec.ts'",
+    "prettier": "prettier -w src/*.ts"
   },
   "repository": {
     "type": "git",
@@ -19,6 +24,7 @@
     "chai": "^4.3.6",
     "hardhat": "^2.9.1",
     "mocha": "^9.2.1",
+    "prettier": "^2.5.1",
     "ts-node": "^10.6.0",
     "typescript": "^4.6.2",
     "web3": "^1.7.1"

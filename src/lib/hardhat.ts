@@ -6,7 +6,7 @@ import path from "path";
 
 enum ConfigFileType {
   JS = "js",
-  TS = "ts",
+  TS = "ts"
 }
 
 type SessionConfigMeta = { path: string; type: ConfigFileType };
@@ -16,15 +16,16 @@ class HardhatUtils {
     cmd: string,
     preference?: ConfigFileType
   ): Promise<string> {
-    // Check for passed in `--config` or `--tsconfig` flags
-    const match = cmd.match(/--(ts)?config\s(?<path>(\w|\.|\/)+)/);
+    // Check for passed in `--config` flag
+    const match = cmd.match(/--config\s(?<path>(\w|\.|\/)+)/);
     if (match) return match?.groups?.path as string;
     else {
       // Glob the filesystem
+      // TODO: this is unnecessary with `hardhat-directory`
       const patterns = [
         "**/**/**/hardhat.config.ts",
         "**/**/**/hardhat.config.js",
-        "!node_modules",
+        "!node_modules"
       ];
       const globber = await glob.create(patterns.join("\n"));
       const files = await globber.glob();
@@ -50,28 +51,26 @@ class HardhatUtils {
       `hardhat-session.config.${filetype}`
     );
 
-    // Format the network config
-    const sessionNetworkConfig = JSON.stringify({
-      [sessionId]: {
-        url: `https://tcod.app3.dev/api/v0/instance/${sessionId}`,
-        chainId: 1337,
-      },
-    })
-      .replace(`{"${sessionId}"`, `"${sessionId}"`)
-      .replace("}}", "},");
+    const sessionNetworkConfig = `"${sessionId}":{url:"https://tcod.app3.dev/api/v0/instance/${sessionId}",chainId:1337},`;
 
     // Read the file
 
     const lines: Array<string> = [];
 
     const reader = readline.createInterface({
-      input: fs.createReadStream(filepath),
+      input: fs.createReadStream(filepath)
     });
 
     reader.on("line", (line: string) => {
-      lines.push(line);
-      if (line.includes("networks: {")) {
-        lines.push(sessionNetworkConfig);
+      if (line.match(/"?networks"?:\s?{\s?},?/)) {
+        lines.push(`networks: {${sessionNetworkConfig}},`);
+      } else if (line.includes("networks: {")) {
+        lines.push(line);
+        // Match the expected indentation
+        const indentation = line.split("networks")[0];
+        lines.push(`${indentation}${indentation}${sessionNetworkConfig}`);
+      } else {
+        lines.push(line);
       }
     });
 
@@ -95,16 +94,28 @@ class HardhatUtils {
   }
 
   /**
-   * If a command contains the `config` or `tsconfig` flag, strip it.
+   * If a command contains the `config` flag, strip it.
    * @param cmd
    * @returns cmd without config flag.
    */
-  public static stripConfigFlag(cmd: string): string {
-    const match = cmd.match(/(?<flag>\s--(ts)?config\s(\w|\.|\/)+)/);
-    if (match) {
-      const flag = match?.groups?.flag as string;
-      return cmd.replace(flag, "");
-    } else return cmd;
+  public static stripFlags(cmd: string): string {
+    let clean: string = cmd;
+
+    // Strip `--config`
+    const confMatch = cmd.match(/(?<flag>\s--config\s(\w|\.|\/)+)/);
+    if (confMatch) {
+      const flag = confMatch?.groups?.flag as string;
+      clean = clean.replace(flag, "");
+    }
+
+    // Strip `--network`
+    const netMatch = clean.match(/(?<network>\s--network\s(\w+))/);
+    if (netMatch) {
+      const network = netMatch?.groups?.network as string;
+      clean = clean.replace(network, "");
+    }
+
+    return clean;
   }
 }
 

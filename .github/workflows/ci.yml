@@ -43,6 +43,8 @@ jobs:
           #- windows-latest
           #- macos-latest
     #needs: [unit-tests]
+    outputs:
+      session-id: ${{ steps.start-session.outputs.session-id }}
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
@@ -57,15 +59,25 @@ jobs:
         run: "yarn install"
       - name: "Build"
         run: "yarn build"
-      - name: "Start new session and run tests"
+      - name: "Start a new session by running a custom task"
+        id: "start-session"
         uses: ./
         with:
-          cmd: test --config ./tests/hardhat/hardhat.config.js
-          fresh: true
+          cmd: hsa:print --message "CI" --config ./tests/hardhat/hardhat.config.js
+      - name: "Install tests/package dependencies"
+        run: "yarn install"
+        working-directory: ./tests/package
+      - name: "Resume session in package (requires hardhat-directory)"
+        uses: ./
+        with:
+          cmd: hello-world # no need to pass in `--config` because `hardhat-directory` is set
+          session-id: ${{ steps.start-session.outputs.session-id }}
+          hardhat-directory: ./tests/package
       - name: "Resume session and run tests"
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js
+          session-id: ${{ steps.start-session.outputs.session-id }}
   test-action-session-resumption:
     name: "Action: Test Session Resumption"
     runs-on: ${{ matrix.operating-system }}
@@ -96,3 +108,4 @@ jobs:
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
+          session-id: ${{ needs.test-action-new-session.outputs.session-id }}

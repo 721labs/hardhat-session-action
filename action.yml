@@ -5,13 +5,74 @@ inputs:
   cmd:
     required: true
     description: "Hardhat cmd with args e.g. `npx hardhat <cmd>`"
-  fresh:
+  session-id:
     required: false
-    description: "Should a new session be started or a previous one attempt to be resumed?"
-    default: false
+    description: "ID of session to resume; passed in from previous job"
+  hardhat-directory:
+    required: false
+    description: "Directory containing your Hardhat project if it's not contained within root."
+    default: "."
+outputs:
+  session-id:
+    description: "Newly started session ID"
+    value: ${{ steps.start-session.outputs.session-id }}
+  session-endpoint:
+    description: "Endpoint to POST RPC requests to"
+    value: ${{ steps.start-session.outputs.session-endpoint }}
 runs:
-  using: "node16"
-  main: "dist/main/index.js"
+  using: "composite"
+  steps:
+    - name: "Copy files into hardhat-dir"
+      run: |
+        cp ${{ github.action_path }}/dist/pre/index.js ${{ inputs.hardhat-directory }}/pre.js
+        cp ${{ github.action_path }}/dist/hh-config/index.js ${{ inputs.hardhat-directory}}/hh-config.js
+      shell: "bash"
+
+    - name: "Validate Command"
+      run: "node pre.js"
+      shell: "bash"
+      working-directory: ${{ inputs.hardhat-directory }}
+      env:
+        INPUT_CMD: ${{ inputs.cmd }}
+
+    - name: "Resuming Session"
+      run: |
+        echo "Session Resumed: ${{ inputs.session-id }}"
+      shell: "bash"
+      if: ${{ inputs.session-id }}
+
+    - name: "Start Session"
+      id: start-session
+      run: "node ${{ github.action_path }}/dist/main/index.js"
+      shell: "bash"
+      if: ${{ inputs.session-id == null }}
+
+    - name: "Configure Hardhat"
+      id: config-hardhat
+      run: "node hh-config.js"
+      shell: "bash"
+      working-directory: ${{ inputs.hardhat-directory }}
+      env:
+        sessionId: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
+        cmd: ${{ inputs.cmd }}
+
+    - name: "Wait for session to start"
+      run: "node ${{ github.action_path }}/dist/wait/index.js"
+      shell: "bash"
+      env:
+        sessionId: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
+
+    - name: "Run Hardhat Command"
+      run: yarn hardhat ${{ steps.config-hardhat.outputs.clean-cmd }} --config ${{ steps.config-hardhat.outputs.config-path }} --network $SESSION_ID
+      shell: "bash"
+      working-directory: ${{ inputs.hardhat-directory }}
+      env:
+        SESSION_ID: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
+
+    - name: "Clean up custom Hardhat config"
+      run: rm -rf ${{ steps.config-hardhat.outputs.config-path }}
+      shell: "bash"
+
 branding:
   color: "red"
   icon: "box"
