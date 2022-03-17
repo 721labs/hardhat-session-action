@@ -66,7 +66,9 @@ class HardhatUtils {
         lines.push(`networks: {${sessionNetworkConfig}},`);
       } else if (line.includes("networks: {")) {
         lines.push(line);
-        lines.push(sessionNetworkConfig);
+        // Match the expected indentation
+        const indentation = line.split("networks")[0];
+        lines.push(`${indentation}${indentation}${sessionNetworkConfig}`);
       } else {
         lines.push(line);
       }
