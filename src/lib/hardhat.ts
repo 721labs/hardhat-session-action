@@ -51,15 +51,7 @@ class HardhatUtils {
       `hardhat-session.config.${filetype}`
     );
 
-    // Format the network config
-    const sessionNetworkConfig = JSON.stringify({
-      [sessionId]: {
-        url: `https://tcod.app3.dev/api/v0/instance/${sessionId}`,
-        chainId: 1337
-      }
-    })
-      .replace(`{"${sessionId}"`, `"${sessionId}"`)
-      .replace("}}", "},");
+    const sessionNetworkConfig = `"${sessionId}":{url:"https://tcod.app3.dev/api/v0/instance/${sessionId}",chainId:1337},`;
 
     // Read the file
 
