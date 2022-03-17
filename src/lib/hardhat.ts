@@ -59,7 +59,7 @@ class HardhatUtils {
       }
     })
       .replace(`{"${sessionId}"`, `"${sessionId}"`)
-      .replace("}}", "},");
+      .replace("}}", "}");
 
     // Read the file
 
@@ -70,9 +70,10 @@ class HardhatUtils {
     });
 
     reader.on("line", (line: string) => {
-      lines.push(line);
-      if (line.includes("networks: {")) {
-        lines.push(sessionNetworkConfig);
+      if (line.startsWith("networks:")) {
+        lines.push(`networks: {${sessionNetworkConfig}},`);
+      } else {
+        lines.push(line);
       }
     });
 
