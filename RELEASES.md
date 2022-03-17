@@ -12,3 +12,5 @@
 - Adds: `uses.hardhat-directory`
 - Adds: Passing session ID as output
 - Internal: Switches to a composite strategy.
+- Adds: `outputs.session-id`
+- Adds: `outputs.session-endpoint`
