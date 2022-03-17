@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "721 Labs (https://721.dev)",
   "scripts": {
     "build:pre": "ncc build -m src/pre.ts -o dist/pre",

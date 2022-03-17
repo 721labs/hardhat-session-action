@@ -14,7 +14,7 @@ enum HttpMethod {
 const TRACE_KEY = "x-hardhat-session-trace";
 const RELEASE_KEY = "x-hardhat-session-release";
 const VERSION_KEY = "x-hardhat-session-version";
-const VERSION = "0.0.1";
+const VERSION = "0.0.2";
 
 const baseAPIConfig = {
   baseURL: "https://tcod.app3.dev/api/v0",
