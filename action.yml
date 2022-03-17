@@ -19,8 +19,10 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - name: "Copy pre into hardhat-dir"
-      run: cp dist/pre/index.js ${{ inputs.hardhat-directory }}/pre.js
+    - name: "Copy files into hardhat-dir"
+      run: |
+        cp dist/pre/index.js ${{ inputs.hardhat-directory }}/pre.js
+        cp dist/hh-config/index.js ${{ inputs.hardhat-directory}}/hh-config.js
       shell: "bash"
 
     - name: "Validate Command"
@@ -44,7 +46,7 @@ runs:
 
     - name: "Configure Hardhat"
       id: config-hardhat
-      run: "node dist/hh-config/index.js"
+      run: "node hh-config.js"
       shell: "bash"
       working-directory: ${{ inputs.hardhat-directory }}
       env:
