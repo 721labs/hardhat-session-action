@@ -21,8 +21,8 @@ runs:
   steps:
     - name: "Copy files into hardhat-dir"
       run: |
-        cp dist/pre/index.js ${{ inputs.hardhat-directory }}/pre.js
-        cp dist/hh-config/index.js ${{ inputs.hardhat-directory}}/hh-config.js
+        cp ${{ github.action_path }}/dist/pre/index.js ${{ inputs.hardhat-directory }}/pre.js
+        cp ${{ github.action_path }}/dist/hh-config/index.js ${{ inputs.hardhat-directory}}/hh-config.js
       shell: "bash"
 
     - name: "Validate Command"
@@ -40,7 +40,7 @@ runs:
 
     - name: "Start Session"
       id: start-session
-      run: "node dist/main/index.js"
+      run: "node ${{ github.action_path }}/dist/main/index.js"
       shell: "bash"
       if: ${{ inputs.session-id == null }}
 
@@ -54,7 +54,7 @@ runs:
         cmd: ${{ inputs.cmd }}
 
     - name: "Wait for session to start"
-      run: "node dist/wait/index.js"
+      run: "node ${{ github.action_path }}/dist/wait/index.js"
       shell: "bash"
       env:
         sessionId: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
