@@ -16,6 +16,9 @@ outputs:
   session-id:
     description: "Newly started session ID"
     value: ${{ steps.start-session.outputs.session-id }}
+  session-endpoint:
+    description: "Endpoint to POST RPC requests to"
+    value: ${{ steps.start-session.outputs.session-endpoint }}
 runs:
   using: "composite"
   steps:

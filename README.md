@@ -11,7 +11,8 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
 ```yaml
 # Set the output of the start session step in order to make it available in downstream jobs.
 outputs:
-  session-id: ${{ steps.start-session.outputs._session-id }}
+  session-id: ${{ steps.start-session.outputs.session-id }}
+  session-endpoint: ${{ steps.start-session.outputs.session-endpoint }}
 steps:
   - uses: 721labs/hardhat-session-action@main
     id: start-session
