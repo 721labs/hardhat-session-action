@@ -6,6 +6,8 @@ GitHub Action for running your Hardhat tests in a dedicated, session-lived conta
 
 Once created, a session is accessible from all jobs within a workflow.
 
+**Please Note**: This action is pre-release and subject to change when using `@main`.
+
 ### Usage
 
 ```yaml
@@ -75,12 +77,12 @@ jobs:
       - run: "yarn hardhat compile"
       - name: "Run Migration:00"
         id: migration-00
-        uses: 721labs/hardhat-session-action@latest
+        uses: 721labs/hardhat-session-action@main
         with:
           cmd: "migration:00"
           hardhat-directory: ./packages/contracts
       - name: "Run Migration:01"
-        uses: 721labs/hardhat-session-action@latest
+        uses: 721labs/hardhat-session-action@main
         with:
           cmd: "migration:01"
           session-id: ${{ steps.migration-00.outputs.session-id }}
