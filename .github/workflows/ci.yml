@@ -108,4 +108,4 @@ jobs:
         uses: ./
         with:
           cmd: test --config ./tests/hardhat/hardhat.config.js # doesn't do anything other than validates that Hardhat is installed
-          session-id: ${{ needs.test-action-new-session.steps.start-session.outputs.session-id }}
+          session-id: ${{ needs.test-action-new-session.outputs.session-id }}
