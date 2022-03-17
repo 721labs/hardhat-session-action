@@ -4,7 +4,9 @@
   "scripts": {
     "build:pre": "ncc build -m src/pre.ts -o dist/pre",
     "build:main": "ncc build -m src/main.ts -o dist/main",
-    "build": "yarn build:pre && yarn build:main",
+    "build:hh-config": "ncc build -m src/hh-config.ts -o dist/hh-confg",
+    "build:wait": "ncc build -m src/wait.ts -o dist/wait",
+    "build": "yarn build:pre && yarn build:main && yarn build:hh-config && yarn build:wait",
     "test": "mocha -r ts-node/register -t 180s 'tests/unit/*.spec.ts'",
     "prettier": "prettier -w src/*.ts"
   },

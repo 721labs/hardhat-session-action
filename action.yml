@@ -10,7 +10,7 @@ inputs:
     description: "ID of session to resume; passed in from previous job"
   hardhat-directory:
     required: false
-    description: "Directory containing your Hardhat project, if not root."
+    description: "Directory containing your Hardhat project if it's not contained within root."
     default: "."
 outputs:
   session-id:
@@ -41,9 +41,34 @@ runs:
       run: "node dist/main/index.js"
       shell: "bash"
       if: ${{ inputs.session-id == null }}
-      # env:
-      #   INPUT_CMD: ${{ inputs.cmd }}
-      #   INPUT_FRESH: ${{ inputs.fresh }}
+
+    - name: "Configure Hardhat"
+      id: config-hardhat
+      run: "node dist/hh-config/index.js"
+      shell: "bash"
+      working-directory: ${{ inputs.hardhat-directory }}
+      env:
+        sessionId: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
+        cmd: ${{ inputs.cmd }}
+
+    - name: "Wait for session to start"
+      run: "node dist/wait/index.js"
+      shell: "bash"
+      env:
+        sessionId: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
+
+    - name: "Run Hardhat Command"
+      run: |
+        yarn hardhat ${{ steps.config-hardhat.outputs.clean-cmd }} --${{ steps.config-hardhat.outputs.config-flag }} ${{ steps.config-hardhat.outputs.config-path }} --network $SESSION_ID
+      shell: "bash"
+      working-directory: ${{ inputs.hardhat-directory }}
+      env:
+        SESSION_ID: ${{ steps.start-session.outputs.session-id || inputs.session-id }}
+
+    - name: "Clean up custom Hardhat config"
+      run: rm -rf ${{ steps.config-hardhat.outputs.config-path }}
+      shell: "bash"
+
 branding:
   color: "red"
   icon: "box"

@@ -21,6 +21,7 @@ class HardhatUtils {
     if (match) return match?.groups?.path as string;
     else {
       // Glob the filesystem
+      // TODO: this is unnecessary with `hardhat-directory`
       const patterns = [
         "**/**/**/hardhat.config.ts",
         "**/**/**/hardhat.config.js",
