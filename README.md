@@ -10,6 +10,7 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
 
 ```yaml
 - uses: 721labs/hardhat-session-action@main
+  id: start-session
   with:
     # The Hardhat command, including flags, you wish to run within the session container.
     # For example:
@@ -22,11 +23,11 @@ Once created, a session is accessible via all jobs for a given matrix-configurat
     # Type: String
     # Required: True
     cmd: ""
-    # Start a new session or attempt to resume the previous session?
-    # Type: Boolean
+    # ID of session to resume; acquired through a previous output.
+    # e.g. `${{ steps.start-session.outputs.session-id }}`
+    # Type: String
     # Required: False
-    # Default: false
-    fresh: true
+    session-id: ""
     # Directory containing your Hardhat project if not the root dir.
     # Note that the action does not read job.defaults.run.working_directory.
     # Type: String
