@@ -4,7 +4,7 @@
 
 GitHub Action for running your Hardhat tests in a dedicated, session-lived container.
 
-Once created, a session is accessible via all jobs for a given matrix-configuration within a workflow.
+Once created, a session is accessible from all jobs within a workflow.
 
 ### Usage
 
