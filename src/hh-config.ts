@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import HardhatUtils, { ConfigFileType } from "./lib/hardhat";
+import HardhatUtils from "./lib/hardhat";
 
 (async () => {
   try {
@@ -10,10 +10,6 @@ import HardhatUtils, { ConfigFileType } from "./lib/hardhat";
     const configMeta = await HardhatUtils.addNetwork(cmd, sessionId as string);
 
     core.setOutput("clean-cmd", HardhatUtils.stripFlags(cmd));
-    core.setOutput(
-      "config-flag",
-      configMeta.type === ConfigFileType.JS ? "config" : "tsconfig"
-    );
     core.setOutput("config-path", configMeta.path);
   } catch (error) {
     const message = (error as unknown as any).message as string;
